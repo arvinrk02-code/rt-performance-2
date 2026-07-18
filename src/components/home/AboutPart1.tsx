@@ -1,15 +1,28 @@
 import s from "./home.module.css";
 
+/* the three square detail shots, in order across the band */
+const TRIPTYCH = [
+  { src: "/photos/about-detail-1.jpg", alt: "Forged wheel with red-lipped rim on a black car" },
+  { src: "/photos/about-detail-2.jpg", alt: "Gloss-black wing mirror detail" },
+  { src: "/photos/about-detail-3.jpg", alt: "Overhead view of a black coupe on the studio floor" },
+];
+
 /** About — Cayenne Black Edition grammar: bold uppercase statement lower-left,
- *  dimmed media right (black placeholder until the real shot is chosen),
- *  then the 3-up gallery band with corner "+" buttons. */
+ *  dimmed media right, then the 3-up gallery band with corner "+" buttons. */
 export default function AboutPart1() {
   return (
     <section id="about" data-theme="dark" data-chapter="About" aria-labelledby="about-h">
       <div className={s.stmt}>
         <div className={s.stmtMedia} aria-hidden="true">
-          {/* [PHOTO PLACEHOLDER — tell me the shot and it drops in here] */}
-          <div className={s.ph} data-parallax />
+          {/* black ground stays behind so there's no flash before decode */}
+          <div className={s.ph} />
+          <img
+            className={s.stmtImg}
+            src="/photos/about-statement.jpg"
+            alt=""
+            loading="lazy"
+            data-parallax
+          />
         </div>
         <div className={s.stmtContent}>
           <h2 id="about-h" className={s.stmtHead} data-reveal="headline">
@@ -23,15 +36,15 @@ export default function AboutPart1() {
         </div>
       </div>
 
-      <div className={s.triptych} data-reveal="stagger" aria-label="Workshop gallery">
-        {[0, 1, 2].map((i) => (
+      <div className={s.triptych} data-reveal="stagger" aria-label="Recent work">
+        {TRIPTYCH.map((t) => (
           <a
-            key={i}
+            key={t.src}
             href="/gallery"
             className={s.tripCard}
-            aria-label="Open the gallery"
+            aria-label={`${t.alt} — open the gallery`}
           >
-            {/* [PHOTO PLACEHOLDER {i+1} — black until chosen] */}
+            <img src={t.src} alt={t.alt} loading="lazy" />
             <span className={s.plus} aria-hidden="true">
               +
             </span>
