@@ -69,8 +69,6 @@ export default function Landing() {
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastAdvance = useRef(0);
   const changing = useRef(false);
-  const wheelAccum = useRef(0);
-  const dragX = useRef<number | null>(null);
   const indexRef = useRef(0);
   const reduceRef = useRef(false);
 
@@ -136,45 +134,19 @@ export default function Landing() {
       reduce ? 250 : LOADER_MS
     );
 
+    // scroll/swipe deliberately do NOT change the car — vertical gestures
+    // are reserved for page scrolling once further sections exist. The car
+    // changes only via autoplay, clicking a dial number, or arrow keys.
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") advance(1);
       if (e.key === "ArrowLeft") advance(-1);
     };
-    const onWheel = (e: WheelEvent) => {
-      if (changing.current) return;
-      wheelAccum.current +=
-        Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      if (wheelAccum.current > 140) {
-        wheelAccum.current = 0;
-        advance(1);
-      } else if (wheelAccum.current < -140) {
-        wheelAccum.current = 0;
-        advance(-1);
-      }
-    };
-    const onDown = (e: PointerEvent) => {
-      if ((e.target as HTMLElement).closest('a, button, [role="button"]'))
-        return;
-      dragX.current = e.clientX;
-    };
-    const onUp = (e: PointerEvent) => {
-      if (dragX.current == null) return;
-      const dx = e.clientX - dragX.current;
-      dragX.current = null;
-      if (Math.abs(dx) > 60) advance(dx < 0 ? 1 : -1);
-    };
 
     window.addEventListener("keydown", onKey);
-    window.addEventListener("wheel", onWheel, { passive: true });
-    window.addEventListener("pointerdown", onDown);
-    window.addEventListener("pointerup", onUp);
     return () => {
       clearTimeout(t);
       if (timer.current) clearInterval(timer.current);
       window.removeEventListener("keydown", onKey);
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("pointerdown", onDown);
-      window.removeEventListener("pointerup", onUp);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

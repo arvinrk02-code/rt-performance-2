@@ -132,7 +132,8 @@ export default function Tach({
         const [x1, y1] = pt(a, 73.5);
         const [x2, y2] = pt(a, R_ARC);
         const [nx, ny] = pt(a, 61);
-        const [hx, hy] = pt(a, 76);
+        // hit target sits on the dial number itself — the number is the control
+        const [hx, hy] = pt(a, 61);
         const active = i === index;
         return (
           <g key={i}>
@@ -157,7 +158,7 @@ export default function Tach({
             <circle
               cx={hx.toFixed(2)}
               cy={hy.toFixed(2)}
-              r="16"
+              r="17"
               fill="transparent"
               role="button"
               tabIndex={0}
