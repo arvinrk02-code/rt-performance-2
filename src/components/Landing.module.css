@@ -11,8 +11,9 @@
   position: absolute;
   inset: 0;
   opacity: 0;
-  /* swap happens inside the exposure dip — must complete before it lifts */
-  transition: opacity 0.4s ease;
+  /* hard cut — the image swaps instantly, fully hidden under the black dip,
+     so the title and car never disagree mid-transition */
+  transition: none;
   pointer-events: none;
 }
 
@@ -142,6 +143,13 @@
   border-radius: 3px;
 }
 
+/* no blue focus box / tap highlight when selecting a graduation… */
+.tachSvg circle {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* …but keep a subtle keyboard indicator (stroke, not a box) */
 .tachSvg circle:focus-visible {
   outline: none;
   stroke: rgba(255, 255, 255, 0.95);
@@ -370,8 +378,11 @@
   0% {
     opacity: 0;
   }
-  42% {
-    opacity: 0.96;
+  33% {
+    opacity: 1;
+  }
+  58% {
+    opacity: 1;
   }
   100% {
     opacity: 0;
