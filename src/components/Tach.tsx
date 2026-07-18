@@ -92,14 +92,19 @@ export default function Tach({
     cancelAnimationFrame(raf.current);
     cancelAnimationFrame(rafCreep.current);
     if (from === count - 1 && index === 0) {
-      // Limiter reset (last car → first): the film dip is fully black when
-      // this commit lands, so the needle goes home INSTANTLY under cover.
-      // A 620ms spring here would still be sweeping backward — overshooting
-      // off-scale past graduation 1 — as the first scene fades back in,
-      // which read as the screen glitching. Snap = scene 1 opens with a
-      // settled instrument, like every other autoplay cut.
+      // Limiter reset (last car → first): sweep home to graduation 1 with a
+      // PLAIN ease — never the spring, whose overshoot would fling the needle
+      // off-scale past 1 (that flail read as a glitch). Freeze at the true
+      // angle, then ease back in step with the scene crossfade so it reads as
+      // a deliberate reset, not a teleport.
       setTrans("none");
-      setRot(target);
+      setRot(currentAngle());
+      raf.current = requestAnimationFrame(() => {
+        raf.current = requestAnimationFrame(() => {
+          setTrans(`transform 680ms cubic-bezier(0.4, 0, 0.2, 1)`);
+          setRot(target);
+        });
+      });
     } else {
       // Freeze at the true current angle first: if the needle was already
       // creeping toward this very graduation, the CSS target wouldn't change

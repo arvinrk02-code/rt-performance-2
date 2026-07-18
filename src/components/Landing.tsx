@@ -8,19 +8,15 @@ import styles from "./Landing.module.css";
 
 const AUTOPLAY_MS = 7000;
 const LOADER_MS = 2100;
-const BLINK_MS = 760;
-const SWAP_AT_MS = 300; // slide swaps at the bottom of the exposure dip
 
 export default function Landing() {
   const [loading, setLoading] = useState(true);
   const [index, setIndex] = useState(0);
   const [prevIndex, setPrevIndex] = useState<number | null>(null);
-  const [blink, setBlink] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
 
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastAdvance = useRef(0);
-  const changing = useRef(false);
   const indexRef = useRef(0);
   const reduceRef = useRef(false);
 
@@ -28,50 +24,16 @@ export default function Landing() {
     indexRef.current = index;
   }, [index]);
 
-  const changeStart = useRef(0);
-  const pendingTarget = useRef<number | null>(null);
-  const goToRef = useRef<(i: number) => void>(() => {});
-
-  /** Cut finished: release the lock and honour any click made mid-cut. */
-  const finishCut = useCallback(() => {
-    setBlink(false);
-    changing.current = false;
-    const p = pendingTarget.current;
-    pendingTarget.current = null;
-    if (p != null && p !== indexRef.current) goToRef.current(p);
+  /** Seamless crossfade: the incoming car + its caption fade up as one while
+   *  the outgoing pair fades out (coupled, so title and car never disagree).
+   *  No blackout, so the nav stays visible throughout. */
+  const goTo = useCallback((i: number) => {
+    const target = ((i % SLIDES.length) + SLIDES.length) % SLIDES.length;
+    if (target === indexRef.current) return;
+    lastAdvance.current = Date.now();
+    setPrevIndex(indexRef.current);
+    setIndex(target);
   }, []);
-
-  /** Film cut: the scene dips through black while the next car fades up. */
-  const goTo = useCallback(
-    (i: number) => {
-      const target = ((i % SLIDES.length) + SLIDES.length) % SLIDES.length;
-      if (changing.current && Date.now() - changeStart.current < 2000) {
-        // mid-cut clicks are queued, not dropped — every press counts
-        if (target !== indexRef.current) pendingTarget.current = target;
-        return;
-      }
-      if (target === indexRef.current) return;
-      lastAdvance.current = Date.now();
-      if (reduceRef.current) {
-        setPrevIndex(indexRef.current);
-        setIndex(target);
-        return;
-      }
-      changing.current = true;
-      changeStart.current = Date.now();
-      setBlink(true);
-      window.setTimeout(() => {
-        setPrevIndex(indexRef.current);
-        setIndex(target);
-      }, SWAP_AT_MS);
-      window.setTimeout(finishCut, BLINK_MS);
-    },
-    [finishCut]
-  );
-
-  useEffect(() => {
-    goToRef.current = goTo;
-  }, [goTo]);
 
   const advance = useCallback(
     (dir: number) => goTo(indexRef.current + dir),
@@ -147,14 +109,25 @@ export default function Landing() {
         {slide.title}
       </div>
 
-      {/* headline block — keyed so it re-animates each slide change */}
-      <div className={styles.copy} key={slide.title}>
-        <h1 className={styles.title}>{slide.title}</h1>
-        {slide.sub && <p className={styles.sub}>{slide.sub}</p>}
-        <a className={styles.cta} href="/our-work">
-          {slide.cta}
-        </a>
-      </div>
+      {/* caption layers — one per car, crossfading in lock-step with the
+          images above so the headline always matches the car on screen */}
+      {SLIDES.map((s, i) => (
+        <div
+          key={s.img}
+          className={`${styles.copy} ${i === index ? styles.copyActive : ""}`}
+          aria-hidden={i !== index}
+        >
+          <h1 className={styles.title}>{s.title}</h1>
+          {s.sub && <p className={styles.sub}>{s.sub}</p>}
+          <a
+            className={styles.cta}
+            href="/our-work"
+            tabIndex={i === index ? 0 : -1}
+          >
+            {s.cta}
+          </a>
+        </div>
+      ))}
 
       {/* shared nav — transparent, floating over the hero */}
       <SiteHeader variant="hero" />
@@ -186,16 +159,6 @@ export default function Landing() {
           {slide.short}
         </div>
       </div>
-
-      {/* film-cut dip — animationend is the authoritative cleanup; the
-          timeout in goTo is only a fallback for throttled tabs */}
-      {blink && (
-        <div
-          className={styles.blink}
-          aria-hidden="true"
-          onAnimationEnd={finishCut}
-        />
-      )}
 
       {/* entry gate — the RT mark arrives the way RT's work does: a fresh
           respray curing from matte primer to a deep, clear-coated gloss. */}

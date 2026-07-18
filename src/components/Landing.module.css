@@ -11,9 +11,9 @@
   position: absolute;
   inset: 0;
   opacity: 0;
-  /* hard cut — the image swaps instantly, fully hidden under the black dip,
-     so the title and car never disagree mid-transition */
-  transition: none;
+  /* seamless crossfade — the outgoing car fades out as the incoming fades in,
+     no blackout, so the nav and page never flash dark between cars */
+  transition: opacity 620ms ease;
   pointer-events: none;
 }
 
@@ -64,24 +64,22 @@
 
 /* ------------------------------------------------------------------ copy */
 
+/* caption layers stack in the same spot; only the active one shows, and they
+   crossfade in lock-step with the car images (same 620ms) */
 .copy {
   position: absolute;
   left: 7%;
   top: 21vh;
   z-index: 5;
   max-width: 36vw;
-  animation: copyIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 620ms ease;
 }
 
-@keyframes copyIn {
-  from {
-    opacity: 0;
-    transform: translateY(26px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+.copyActive {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .title {
@@ -262,32 +260,6 @@
   to {
     opacity: 1;
     transform: none;
-  }
-}
-
-/* ------------------------------------------------------------- film cut */
-
-.blink {
-  position: absolute;
-  inset: 0;
-  z-index: 30;
-  background: #020204;
-  pointer-events: none;
-  animation: blinkDip 760ms ease both;
-}
-
-@keyframes blinkDip {
-  0% {
-    opacity: 0;
-  }
-  33% {
-    opacity: 1;
-  }
-  58% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
   }
 }
 
@@ -530,8 +502,9 @@
     animation: none;
   }
 
+  /* instant swap, no crossfade */
   .copy {
-    animation: none;
+    transition: none;
   }
 
   /* gate: no cure/gloss — the finished mark simply appears, then fades */
@@ -550,9 +523,5 @@
   .numOut,
   .tachName {
     animation: none;
-  }
-
-  .blink {
-    display: none;
   }
 }
