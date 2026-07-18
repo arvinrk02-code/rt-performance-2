@@ -194,7 +194,7 @@ export default function Landing() {
           <img
             src={s.img}
             alt=""
-            className={styles.slideImg}
+            className={`${styles.slideImg} ${s.contain ? styles.slideContain : ""}`}
             draggable={false}
           />
           <div className={styles.scrim} />

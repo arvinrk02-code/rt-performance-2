@@ -5,6 +5,9 @@ export interface Slide {
   short: string;
   sub?: string;
   cta: string;
+  /** Long cars that get cropped by full-bleed cover — show the whole car
+   *  (letterboxed) on desktop instead. */
+  contain?: boolean;
 }
 
 /* All seven studio heroes generated (facing left, RT plates). Sequenced for
@@ -24,6 +27,7 @@ export const SLIDES: Slide[] = [
     short: "Cullinan",
     sub: "Body-work correction finished to concours standard",
     cta: "View the work",
+    contain: true,
   },
   {
     img: "/slides/hero-ferrari-458.jpg",
@@ -52,6 +56,7 @@ export const SLIDES: Slide[] = [
     short: "Continental GT",
     sub: "Paint correction and ceramic protection in racing green",
     cta: "View the work",
+    contain: true,
   },
   {
     img: "/slides/hero-mercedes-g500-4x4.jpg",

@@ -28,8 +28,17 @@
   transform: scale(1);
 }
 
+/* long cars (Cullinan, Bentley) shown whole rather than cropped by cover */
+.slideContain {
+  object-fit: contain;
+}
+
 .slideActive .slideImg {
   animation: kenburns 8s ease-out forwards;
+}
+
+.slideActive .slideContain {
+  animation: none;
 }
 
 @keyframes kenburns {
@@ -426,8 +435,8 @@
 }
 
 /* ---- stacked layout (phones / portrait tablets), Mansory-style:
-   headline on solid black above the image band, car untouched by text,
-   small centred CTA below the band, instrument at the foot ---- */
+   headline on solid black above the car, whole car shown (not cropped),
+   instrument overlapping the car's base, CTA at the foot ---- */
 @media (max-width: 900px) {
   .nav {
     height: 64px;
@@ -442,27 +451,36 @@
     height: 26px;
   }
 
+  /* fixed ~16:9 band = full car width, only sky/floor lightly trimmed */
   .slide {
     top: 27vh;
     bottom: auto;
-    height: 44vh;
+    height: auto;
+    aspect-ratio: 20 / 11;
   }
 
-  .slideImg {
-    object-position: 70% center;
+  .slideImg,
+  .slideContain {
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* no ken-burns on mobile so the whole car is always framed */
+  .slideActive .slideImg {
+    animation: none;
   }
 
   /* image band melts into the black stage above and below */
   .scrim {
     background:
-      linear-gradient(180deg, #020204 0%, rgba(2, 2, 4, 0) 10%),
-      linear-gradient(0deg, #020204 0%, rgba(2, 2, 4, 0) 12%);
+      linear-gradient(180deg, #020204 0%, rgba(2, 2, 4, 0) 16%),
+      linear-gradient(0deg, #020204 0%, rgba(2, 2, 4, 0) 18%);
   }
 
   .copy {
     left: 6%;
     right: 6%;
-    top: calc(64px + 3.5vh);
+    top: calc(64px + 4.5vh);
     max-width: none;
     text-align: center;
   }
@@ -477,21 +495,23 @@
     max-width: 46ch;
   }
 
-  /* CTA leaves the copy block visually: centred beneath the image band */
+  /* instrument stays with the car: overlapping its base, above the CTA */
+  .tach {
+    top: 51vh;
+    bottom: auto;
+    transform: translateX(-50%) scale(0.72);
+    transform-origin: top center;
+  }
+
+  /* CTA at the foot, centred, clear of the instrument */
   .cta {
     position: absolute;
     left: 50%;
-    top: calc(74vh - 64px - 3.5vh);
+    top: 82vh;
     transform: translateX(-50%);
     margin: 0;
     padding: 11px 22px;
     white-space: nowrap;
-  }
-
-  .tach {
-    bottom: 0;
-    transform: translateX(-50%) scale(0.62);
-    transform-origin: bottom center;
   }
 }
 
