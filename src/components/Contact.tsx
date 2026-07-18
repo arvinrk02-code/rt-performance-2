@@ -12,7 +12,10 @@ const PHONE_TEL = "tel:+442089000014";
 const WHATSAPP_URL = "https://wa.me/447704155514";
 const EMAIL = "info@rt-performance.com";
 
-const CONTACT_METHODS = ["Phone", "WhatsApp", "Email"] as const;
+/* Photo upload limits — kept in step with the /api/quote endpoint. */
+const MAX_FILES = 6;
+const MAX_MB = 5;
+const ACCEPT = "image/jpeg,image/png,image/heic,image/webp";
 
 /* Thin-stroke ember icons for the contact rail. */
 function PhoneIcon() {
@@ -51,35 +54,59 @@ function PinIcon() {
 }
 
 export default function Contact() {
-  const [method, setMethod] = useState<(typeof CONTACT_METHODS)[number]>("Phone");
   const [vehicle, setVehicle] = useState("");
   const [service, setService] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
+  const [fileNote, setFileNote] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [servicePickerOpen, setServicePickerOpen] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [sentName, setSentName] = useState<string | null>(null);
 
-  /* No mail backend yet — compose the enquiry into the visitor's email app.
-     Swap this for an API route + provider when one is chosen. */
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  /* Merge new selections with existing, dropping anything over the size limit
+     or beyond the count cap, and explain what was skipped. */
+  function addFiles(list: FileList | null) {
+    if (!list) return;
+    const incoming = Array.from(list);
+    const tooBig = incoming.filter((f) => f.size > MAX_MB * 1024 * 1024);
+    let next = [...files, ...incoming.filter((f) => f.size <= MAX_MB * 1024 * 1024)];
+    let note: string | null = null;
+    if (tooBig.length) {
+      note = `${tooBig.length} photo${tooBig.length > 1 ? "s were" : " was"} over ${MAX_MB} MB and skipped.`;
+    }
+    if (next.length > MAX_FILES) {
+      next = next.slice(0, MAX_FILES);
+      note = `Up to ${MAX_FILES} photos — extras were left off.`;
+    }
+    setFiles(next);
+    setFileNote(note);
+  }
+
+  function removeFile(i: number) {
+    setFiles((f) => f.filter((_, idx) => idx !== i));
+    setFileNote(null);
+  }
+
+  /* Post the enquiry (fields + photos) to the shared /api/quote endpoint. */
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setError(null);
     const data = new FormData(e.currentTarget);
-    const get = (k: string) => String(data.get(k) ?? "").trim();
-
-    const vehicle = get("vehicle");
-    const subject = `Consultation request${vehicle ? ` — ${vehicle}` : ""}`;
-    const body = [
-      `Name: ${get("name")}`,
-      `Email: ${get("email")}`,
-      `Phone: ${get("phone") || "—"}`,
-      `Preferred contact: ${get("method")}`,
-      `Vehicle: ${vehicle || "—"}`,
-      `Service required: ${get("service") || "—"}`,
-      "",
-      get("message"),
-    ].join("\n");
-
-    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    setSent(true);
+    files.forEach((f) => data.append("photos", f));
+    setBusy(true);
+    try {
+      const res = await fetch("/api/quote", { method: "POST", body: data });
+      if (!res.ok) throw new Error();
+      const name = String(data.get("name") ?? "").trim();
+      setSentName(name.split(" ")[0] || "there");
+    } catch {
+      setError(
+        "Something went wrong sending that — nothing's lost. Try again, or WhatsApp us on +44 (0)770 415 5514."
+      );
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -168,6 +195,15 @@ export default function Contact() {
             </ul>
           </div>
 
+          {sentName ? (
+            <div className={`${styles.form} ${styles.success}`} role="status">
+              <p className={styles.successHead}>Got it, {sentName}.</p>
+              <p className={styles.successSub}>
+                Taras and the team will reply within one working day. Sooner?{" "}
+                <a href={WHATSAPP_URL}>WhatsApp us</a>.
+              </p>
+            </div>
+          ) : (
           <form className={styles.form} onSubmit={handleSubmit} aria-label="Enquiry">
             <div className={styles.field}>
               <label className={styles.label} htmlFor="c-name">
@@ -207,7 +243,6 @@ export default function Contact() {
                 name="phone"
                 type="tel"
                 autoComplete="tel"
-                required={method !== "Email"}
               />
             </div>
 
@@ -253,27 +288,6 @@ export default function Contact() {
             </div>
 
             <div className={styles.field}>
-              <label className={styles.label} htmlFor="c-method">
-                Preferred contact method
-              </label>
-              <select
-                className={`${styles.input} ${styles.select}`}
-                id="c-method"
-                name="method"
-                value={method}
-                onChange={(e) =>
-                  setMethod(e.target.value as (typeof CONTACT_METHODS)[number])
-                }
-              >
-                {CONTACT_METHODS.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className={styles.field}>
               <label className={styles.label} htmlFor="c-message">
                 Tell us about your project
               </label>
@@ -281,21 +295,80 @@ export default function Contact() {
                 className={`${styles.input} ${styles.textarea}`}
                 id="c-message"
                 name="message"
-                rows={5}
+                rows={4}
                 required
               />
             </div>
 
-            <button className={styles.submit} type="submit">
-              Arrange Consultation <span aria-hidden="true">&rarr;</span>
+            <div className={styles.field}>
+              <span className={styles.label}>
+                Photos of the vehicle{" "}
+                <span className={styles.labelOpt}>· up to {MAX_FILES}, {MAX_MB} MB each</span>
+              </span>
+              <label className={styles.fileDrop}>
+                <input
+                  className={styles.fileInput}
+                  type="file"
+                  accept={ACCEPT}
+                  multiple
+                  onChange={(e) => {
+                    addFiles(e.target.files);
+                    e.target.value = "";
+                  }}
+                />
+                <span className={styles.fileCta}>Add photos</span>
+                <span className={styles.fileHint}>
+                  {files.length
+                    ? `${files.length} of ${MAX_FILES} added`
+                    : "JPG, PNG, HEIC or WebP"}
+                </span>
+              </label>
+
+              {files.length > 0 && (
+                <ul className={styles.fileList}>
+                  {files.map((f, i) => (
+                    <li key={f.name + f.size + i} className={styles.fileItem}>
+                      <span className={styles.fileName}>{f.name}</span>
+                      <span className={styles.fileSize}>
+                        {(f.size / 1024 / 1024).toFixed(1)} MB
+                      </span>
+                      <button
+                        type="button"
+                        className={styles.fileRemove}
+                        onClick={() => removeFile(i)}
+                        aria-label={`Remove ${f.name}`}
+                      >
+                        ×
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {fileNote && (
+                <p className={styles.fileNote} role="alert">
+                  {fileNote}
+                </p>
+              )}
+            </div>
+
+            <button className={styles.submit} type="submit" disabled={busy}>
+              {busy ? (
+                "Sending…"
+              ) : (
+                <>
+                  Arrange Consultation <span aria-hidden="true">&rarr;</span>
+                </>
+              )}
             </button>
 
-            <p className={styles.hint} aria-live="polite">
-              {sent
-                ? `Your email app should now be open with your enquiry — if not, email ${EMAIL} directly.`
-                : ""}
-            </p>
+            {error && (
+              <p className={styles.hint} role="alert">
+                {error}
+              </p>
+            )}
           </form>
+          )}
         </div>
       </div>
 

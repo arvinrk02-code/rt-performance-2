@@ -268,9 +268,14 @@
   transition: background 0.25s ease, border-color 0.25s ease;
 }
 
-.submit:hover {
+.submit:hover:not(:disabled) {
   background: rgba(225, 67, 18, 0.22);
   border-color: var(--ember);
+}
+
+.submit:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
 .submit span {
@@ -283,6 +288,151 @@
   font-size: 12px;
   line-height: 1.5;
   color: rgba(245, 245, 245, 0.55);
+}
+
+/* --- photo upload --------------------------------------------------------- */
+
+.labelOpt {
+  color: rgba(245, 245, 245, 0.4);
+}
+
+.fileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.fileDrop {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.22);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.fileDrop:hover,
+.fileInput:focus-visible + .fileCta {
+  border-color: rgba(225, 67, 18, 0.6);
+}
+
+.fileDrop:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.fileCta {
+  flex-shrink: 0;
+  padding: 7px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 2px;
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.fileHint {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  color: rgba(245, 245, 245, 0.5);
+}
+
+.fileList {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fileItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+}
+
+.fileName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.fileSize {
+  flex-shrink: 0;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: rgba(245, 245, 245, 0.45);
+}
+
+.fileRemove {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: rgba(245, 245, 245, 0.55);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.fileRemove:hover {
+  color: var(--ember);
+}
+
+.fileNote {
+  margin: 8px 0 0;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(225, 67, 18, 0.85);
+}
+
+/* --- success -------------------------------------------------------------- */
+
+.success {
+  justify-content: center;
+  gap: 14px;
+}
+
+.successHead {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(26px, 3vw, 34px);
+  color: var(--ink);
+}
+
+.successSub {
+  margin: 0;
+  max-width: 42ch;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.65;
+  color: rgba(245, 245, 245, 0.66);
 }
 
 /* --- motion --------------------------------------------------------------- */
