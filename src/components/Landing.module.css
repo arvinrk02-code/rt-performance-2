@@ -60,9 +60,9 @@
 .copy {
   position: absolute;
   left: 7%;
-  top: 26vh;
+  top: 21vh;
   z-index: 5;
-  max-width: 46vw;
+  max-width: 36vw;
   animation: copyIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
@@ -81,44 +81,45 @@
   margin: 0;
   font-family: var(--font-serif);
   font-weight: 300;
-  font-size: clamp(34px, 5.6vw, 92px);
+  font-size: clamp(30px, 4.4vw, 74px);
   line-height: 1.08;
   color: #f5f5f5;
   text-wrap: balance;
 }
 
 .sub {
-  margin: 24px 0 0;
+  margin: 20px 0 0;
   font-family: var(--font-sans);
   font-weight: 400;
-  font-size: clamp(14px, 1.15vw, 19px);
+  font-size: clamp(13px, 1.05vw, 17px);
   line-height: 1.55;
   color: rgba(238, 238, 238, 0.88);
-  max-width: 44ch;
+  max-width: 34ch;
 }
 
+/* hairline ghost button — matches the instrument's stroke language */
 .cta {
   display: inline-block;
-  margin-top: 44px;
-  height: 58px;
-  line-height: 58px;
-  padding: 0 34px;
-  border-radius: 4px;
-  /* deepened from Mansory's #829fb0 so white text passes WCAG AA (4.83:1) */
-  background: #567689;
-  color: #fff;
+  margin-top: 34px;
+  padding: 13px 26px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 2px;
+  background: transparent;
+  color: #f5f5f5;
   font-family: var(--font-sans);
-  font-size: 11.5px;
+  font-size: 10.5px;
   font-weight: 500;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   text-decoration: none;
-  transition: background 0.25s ease, transform 0.25s ease;
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease;
 }
 
 .cta:hover {
-  background: #64869b;
-  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.07);
 }
 
 /* ------------------------------------------------------------ a11y focus */
@@ -420,34 +421,88 @@
   }
 
   .copy {
-    max-width: 80vw;
+    max-width: 44vw;
   }
 }
 
-@media (max-width: 700px) {
+/* ---- stacked layout (phones / portrait tablets), Mansory-style:
+   headline on solid black above the image band, car untouched by text,
+   small centred CTA below the band, instrument at the foot ---- */
+@media (max-width: 900px) {
+  .nav {
+    height: 64px;
+    padding-left: 16px;
+  }
+
+  .navContact {
+    height: 64px;
+  }
+
+  .brand img {
+    height: 26px;
+  }
+
+  .slide {
+    top: 27vh;
+    bottom: auto;
+    height: 44vh;
+  }
+
+  .slideImg {
+    object-position: 70% center;
+  }
+
+  /* image band melts into the black stage above and below */
+  .scrim {
+    background:
+      linear-gradient(180deg, #020204 0%, rgba(2, 2, 4, 0) 10%),
+      linear-gradient(0deg, #020204 0%, rgba(2, 2, 4, 0) 12%);
+  }
+
   .copy {
     left: 6%;
-    top: 30vh;
-    max-width: 88vw;
+    right: 6%;
+    top: calc(64px + 3.5vh);
+    max-width: none;
+    text-align: center;
+  }
+
+  .title {
+    font-size: clamp(24px, 7vw, 32px);
+  }
+
+  .sub {
+    margin: 10px auto 0;
+    font-size: 13px;
+    max-width: 46ch;
+  }
+
+  /* CTA leaves the copy block visually: centred beneath the image band */
+  .cta {
+    position: absolute;
+    left: 50%;
+    top: calc(74vh - 64px - 3.5vh);
+    transform: translateX(-50%);
+    margin: 0;
+    padding: 11px 22px;
+    white-space: nowrap;
   }
 
   .tach {
-    bottom: 4px;
-    transform: translateX(-50%) scale(0.74);
+    bottom: 0;
+    transform: translateX(-50%) scale(0.62);
     transform-origin: bottom center;
   }
 }
 
-/* short viewports: lift the copy and shrink the instrument so they never collide */
-@media (max-height: 760px) {
+/* short desktop viewports: lift the copy and shrink the instrument */
+@media (max-height: 760px) and (min-width: 901px) {
   .copy {
-    top: 19vh;
+    top: 17vh;
   }
 
   .cta {
-    margin-top: 30px;
-    height: 50px;
-    line-height: 50px;
+    margin-top: 24px;
   }
 
   .tach {
