@@ -123,18 +123,18 @@ export default function Contact() {
       <div className={styles.inner}>
         <div className={styles.columns}>
           <div className={styles.left}>
-            <h1 className={styles.title}>
+            <h1 className={styles.title} data-reveal="headline">
               Let&rsquo;s discuss
               <br />
               your vehicle.
             </h1>
-            <p className={styles.lede}>
+            <p className={styles.lede} data-reveal="rise">
               Every project begins
               <br />
               with a conversation.
             </p>
 
-            <ul className={styles.methods}>
+            <ul className={styles.methods} data-reveal="stagger">
               <li>
                 <a className={styles.method} href={PHONE_TEL}>
                   <span className={styles.icon}>
@@ -200,7 +200,7 @@ export default function Contact() {
               </p>
             </div>
           ) : (
-          <form className={styles.form} onSubmit={handleSubmit} aria-label="Enquiry">
+          <form className={styles.form} onSubmit={handleSubmit} aria-label="Enquiry" data-reveal="rise">
             <div className={styles.field}>
               <label className={styles.label} htmlFor="c-name">
                 Your name
