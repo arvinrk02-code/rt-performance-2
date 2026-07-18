@@ -80,6 +80,72 @@
   color: #fff;
 }
 
+/* ---- Services dropdown (desktop) ---- */
+
+.navGroup {
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 260px;
+  padding: 12px 0;
+  background: var(--void);
+  border: 1px solid var(--hairline);
+  border-top: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease,
+    visibility 0s linear 0.22s;
+  z-index: 30;
+}
+
+.navGroup:hover .dropdown,
+.navGroup:focus-within .dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease,
+    visibility 0s;
+}
+
+.dropLink {
+  padding: 10px 24px;
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+.dropLink:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dropLink:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: -2px;
+}
+
 .brand {
   position: absolute;
   left: 50%;
@@ -172,6 +238,42 @@
   align-items: flex-start;
   gap: clamp(10px, 2.4vh, 22px);
   text-align: left;
+}
+
+.overlayItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(8px, 1.4vh, 14px);
+}
+
+/* the five Services sub-sections, indented beneath Services in the overlay */
+.overlaySub {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-left: calc(24px + 16px); /* line up past the 01 index + its gap */
+  margin-top: 2px;
+}
+
+.overlaySubLink {
+  font-family: var(--font-sans);
+  font-size: clamp(13px, 1.6vw, 15px);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: rgba(245, 245, 245, 0.6);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.overlaySubLink:hover {
+  color: var(--ember);
+}
+
+.overlaySubLink:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: 3px;
+  border-radius: 3px;
 }
 
 .overlayLink {

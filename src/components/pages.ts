@@ -11,3 +11,12 @@ export const PAGES = [
   { label: "Find Us", href: "/find-us" },
   { label: "Contact Us", href: "/contact" },
 ];
+
+/** The Services dropdown — deep-links to the sections on the Services page. */
+export const SERVICES_SUB = [
+  { label: "Accident Repairs", href: "/services#accident-repairs" },
+  { label: "Body Kits & Customisations", href: "/services#body-kits" },
+  { label: "Restorations", href: "/services#restorations" },
+  { label: "Tints, Sprays & Wraps", href: "/services#tints-sprays-wraps" },
+  { label: "SMART Repairs", href: "/services#smart-repairs" },
+];
