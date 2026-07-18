@@ -4,7 +4,8 @@ import "./globals.css";
 
 const serif = Noto_Serif_Display({
   subsets: ["latin"],
-  weight: ["300"],
+  weight: ["300", "400"],
+  style: ["normal", "italic"],
   variable: "--font-serif",
 });
 
