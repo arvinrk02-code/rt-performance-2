@@ -37,13 +37,13 @@ export default function SiteFooter() {
 
           <span className={`${styles.colHead} ${styles.colHeadGap}`}>Contact</span>
           <a className={styles.link} href="tel:+442089000014">
-            +44 (0)20 8900 0014
+            020 8900 0014
           </a>
           <a className={styles.link} href="https://wa.me/447704155514">
-            WhatsApp +44 (0)770 415 5514
+            WhatsApp +44 7704 155514
           </a>
-          <a className={styles.link} href="mailto:info@rt-performance.com">
-            info@rt-performance.com
+          <a className={styles.link} href="mailto:info@rt-performance.co.uk">
+            info@rt-performance.co.uk
           </a>
           <a
             className={styles.link}
@@ -53,12 +53,27 @@ export default function SiteFooter() {
           >
             Instagram @rtperformance
           </a>
+          <a
+            className={styles.link}
+            href="https://www.facebook.com/RTPerformanceUK"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Facebook RTPerformanceUK
+          </a>
         </div>
       </div>
 
+      <p className={styles.close} aria-hidden="true">
+        Climb over the competition<span className={styles.closeDot}>.</span>
+      </p>
+
       <div className={styles.legal}>
         <span>&copy; {new Date().getFullYear()} RT Performance. All rights reserved.</span>
-        <span className={styles.legalDim}>Wembley · London</span>
+        <span className={styles.legalDim}>
+          VBRA-approved accident repair centre · Carbon &amp; fibreglass
+          in-house since 2009 · Wembley, London
+        </span>
       </div>
     </footer>
   );

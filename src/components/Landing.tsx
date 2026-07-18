@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SLIDES } from "./slides";
 import Tach from "./Tach";
-import SiteHeader from "./SiteHeader";
 import styles from "./Landing.module.css";
 
 const AUTOPLAY_MS = 7000;
@@ -85,7 +84,7 @@ export default function Landing() {
   const slide = SLIDES[index];
 
   return (
-    <div className={styles.stage}>
+    <div className={styles.stage} data-hero>
       {/* slides */}
       {SLIDES.map((s, i) => (
         <div
@@ -110,14 +109,15 @@ export default function Landing() {
       </div>
 
       {/* caption layers — one per car, crossfading in lock-step with the
-          images above so the headline always matches the car on screen */}
+          images above so the headline always matches the car on screen.
+          (The page's single H1 lives in page.tsx; these are display lines.) */}
       {SLIDES.map((s, i) => (
         <div
           key={s.img}
           className={`${styles.copy} ${i === index ? styles.copyActive : ""}`}
           aria-hidden={i !== index}
         >
-          <h1 className={styles.title}>{s.title}</h1>
+          <p className={styles.title}>{s.title}</p>
           {s.sub && <p className={styles.sub}>{s.sub}</p>}
           <a
             className={styles.cta}
@@ -129,11 +129,8 @@ export default function Landing() {
         </div>
       ))}
 
-      {/* shared nav — transparent, floating over the hero */}
-      <SiteHeader variant="hero" />
-
       {/* the instrument — rev-counter as odometer, selector and progress */}
-      <div className={styles.tach}>
+      <div className={styles.tach} data-hero-tach>
         <Tach
           count={SLIDES.length}
           index={index}

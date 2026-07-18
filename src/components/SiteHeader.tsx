@@ -1,28 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { PAGES, SERVICES_SUB } from "./pages";
 import styles from "./SiteHeader.module.css";
 
-/** Inline links in the slim bar; the burger overlay still holds all 8 pages.
+/** Inline links in the slim bar; the burger overlay still holds all 8 items.
  *  Services carries a dropdown of its five sub-sections. */
 const NAV_LEFT = [
-  { label: "About Us", href: "/about" },
+  { label: "About Us", href: "/#about" },
   { label: "Services", href: "/services", sub: SERVICES_SUB },
   { label: "Our Work", href: "/our-work" },
   { label: "Gallery", href: "/gallery" },
 ];
 
 const NAV_RIGHT = [
-  { label: "Community", href: "/community" },
-  { label: "Find Us", href: "/find-us" },
+  { label: "Community", href: "/#reviews" },
+  { label: "Find Us", href: "/#find-us" },
 ];
 
 type Variant = "hero" | "solid";
 
+/** hero = fixed overlay for the home one-pager, inverts with the section
+ *  beneath it; solid = sticky dark bar for standalone pages. */
 export default function SiteHeader({ variant = "solid" }: { variant?: Variant }) {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [onLight, setOnLight] = useState(false);
+  const raf = useRef(0);
 
   // lock the page scroll behind the full-screen menu, and close on Escape
   useEffect(() => {
@@ -39,12 +44,43 @@ export default function SiteHeader({ variant = "solid" }: { variant?: Variant })
     };
   }, [open]);
 
+  // home one-pager: track which themed section sits under the bar. Plain
+  // state, not animation — so it also runs under prefers-reduced-motion.
+  useEffect(() => {
+    if (variant !== "hero") return;
+    const probe = () => {
+      setScrolled(window.scrollY > 40);
+      const probeY = 46; // the bar's midline
+      const sections = document.querySelectorAll<HTMLElement>("[data-theme]");
+      let light = false;
+      sections.forEach((sec) => {
+        const r = sec.getBoundingClientRect();
+        if (r.top <= probeY && r.bottom >= probeY) {
+          light = sec.dataset.theme === "light";
+        }
+      });
+      setOnLight(light);
+    };
+    probe();
+    window.addEventListener("scroll", probe, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", probe);
+      cancelAnimationFrame(raf.current);
+    };
+  }, [variant]);
+
+  const barClass = [
+    styles.nav,
+    variant === "solid" ? styles.solid : styles.hero,
+    variant === "hero" && scrolled ? styles.scrolled : "",
+    variant === "hero" && onLight ? styles.onLight : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <>
-      <header
-        className={`${styles.nav} ${variant === "solid" ? styles.solid : styles.hero}`}
-        aria-label="Main"
-      >
+      <header className={barClass} aria-label="Main" id="site-header">
         <button
           className={styles.burger}
           aria-label="Open menu"
@@ -95,13 +131,13 @@ export default function SiteHeader({ variant = "solid" }: { variant?: Variant })
               {l.label}
             </Link>
           ))}
-          <Link href="/contact" className={styles.navContact}>
-            Contact Us
+          <Link href="/#contact" className={styles.navContact}>
+            Get a Quote
           </Link>
         </nav>
       </header>
 
-      {/* full-screen menu overlay — holds all eight pages */}
+      {/* full-screen menu overlay — holds every destination */}
       <div
         className={`${styles.overlay} ${open ? styles.overlayOpen : ""}`}
         role="dialog"

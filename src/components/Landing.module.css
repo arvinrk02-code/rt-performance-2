@@ -1,9 +1,11 @@
+/* in normal flow so the one-pager scrolls out of it; children stay absolute */
 .stage {
-  position: fixed;
-  inset: 0;
+  position: relative;
+  height: 100dvh;
   overflow: hidden;
   background: #020204;
 }
+
 
 /* ---------------------------------------------------------------- slides */
 

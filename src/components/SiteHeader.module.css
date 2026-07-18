@@ -9,12 +9,54 @@
   border-bottom: 1px solid var(--hairline);
 }
 
-/* transparent, floating over the hero (Home) */
+/* fixed overlay for the home one-pager — transparent over the hero, gains a
+   blur-backed field on scroll, inverts over light sections */
 .hero {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  transition: background 0.35s ease, color 0.35s ease;
+}
+
+.scrolled {
+  background: rgba(2, 2, 4, 0.6);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.onLight.scrolled {
+  background: rgba(250, 250, 248, 0.78);
+  border-bottom-color: var(--hairline-dark);
+}
+
+.onLight .navLeft a,
+.onLight .navRight a,
+.onLight .navPhone {
+  color: rgba(11, 12, 14, 0.85);
+}
+
+.onLight .navLeft a:hover,
+.onLight .navRight a:hover {
+  color: var(--carbon);
+}
+
+.onLight .burger span {
+  background: var(--carbon);
+}
+
+.onLight .dropdown {
+  background: var(--paper);
+  border-color: var(--hairline-dark);
+}
+
+.onLight .dropLink {
+  color: rgba(11, 12, 14, 0.7);
+}
+
+.onLight .dropLink:hover {
+  color: var(--carbon);
+  background: rgba(11, 12, 14, 0.05);
 }
 
 /* solid, sticky at the top of sub-pages */
@@ -160,6 +202,8 @@
   width: auto;
 }
 
+/* Get a Quote — the original premium cell: hairline-bordered, uppercase
+   tracked, no fill. Never hidden. */
 .navContact {
   align-self: stretch;
   display: flex;
@@ -167,6 +211,10 @@
   padding: 0 40px;
   border-left: 1px solid var(--hairline);
   height: 92px;
+}
+
+.onLight .navContact {
+  border-left-color: var(--hairline-dark);
 }
 
 .navLeft a:focus-visible,
@@ -315,9 +363,13 @@
 
 /* ------------------------------------------------------------ responsive */
 
+/* collapse inline links to the burger — but Get a Quote NEVER hides */
 @media (max-width: 1100px) {
-  .navLeft,
-  .navRight {
+  .navLeft {
+    display: none;
+  }
+
+  .navRight > a:not(.navContact) {
     display: none;
   }
 
@@ -332,12 +384,13 @@
     padding-left: 16px;
   }
 
-  .navContact {
-    height: 64px;
-  }
-
   .brand img {
     height: 26px;
+  }
+
+  .navContact {
+    height: 64px;
+    padding: 0 20px;
   }
 }
 

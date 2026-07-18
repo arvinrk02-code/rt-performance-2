@@ -3,9 +3,19 @@
 
   /* --- design tokens: the Mansory-style luxury language, shared site-wide --- */
   --void: #020204; /* near-black stage / page background */
-  --ink: #f5f5f5; /* primary text */
-  --ember: #e14312; /* the single warm accent, used sparingly */
-  --hairline: rgba(255, 255, 255, 0.14); /* thin dividing rules */
+  --ink: #f5f5f5; /* primary (light) text on dark */
+  --ember: #e14312; /* RT orange — the SINGLE chromatic accent */
+  --hairline: rgba(255, 255, 255, 0.14); /* thin dividing rules on dark */
+
+  /* --- home one-pager rhythm (design_1 §2): dark studio ↔ light paper --- */
+  --paper: #fafaf8; /* off-white light base */
+  --carbon: #0b0c0e; /* near-black text on light */
+  --studio-1: #0a0e14; /* blue-black studio, spotlight centre */
+  --studio-2: #05070b; /* blue-black studio, edges/floor */
+  --mist: #f5f6f8; /* white headline text on dark */
+  --muted: #aeb4bd; /* attribution/support text on dark */
+  --gunmetal: #6b7280; /* metallic support */
+  --hairline-dark: rgba(11, 12, 14, 0.14); /* thin rules on light */
 }
 
 * {
@@ -27,9 +37,54 @@ body {
 }
 
 a:focus-visible,
-button:focus-visible {
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
   outline: 2px solid var(--ember);
   outline-offset: 3px;
+}
+
+/* skip link — first tabbable element, visible only on focus */
+.skip-link {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 100;
+  padding: 10px 18px;
+  background: var(--ember);
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 3px;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* visually hidden, available to assistive tech */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* native anchor fallback (Lenis takes over when motion is allowed) */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 ::selection {
