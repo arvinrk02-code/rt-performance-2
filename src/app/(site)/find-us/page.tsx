@@ -19,7 +19,7 @@ export default function FindUsPage() {
         </p>
       </header>
       <section className={styles.body}>
-        <p className={styles.note}>Map &amp; directions — in build</p>
+        <p className={styles.note}>Map &amp; directions (in build)</p>
       </section>
     </>
   );

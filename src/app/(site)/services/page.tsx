@@ -5,14 +5,14 @@ import svc from "./services.module.css";
 export const metadata: Metadata = {
   title: "Services | RT Performance",
   description:
-    "Accident repairs, body kits and customisations, restorations, tints, sprays and wraps, and SMART repairs — all carried out in-house for luxury and performance vehicles.",
+    "Accident repairs, body kits and customisations, restorations, tints, sprays and wraps, and SMART repairs, all carried out in-house for luxury and performance vehicles.",
 };
 
 const SERVICES = [
   {
     id: "accident-repairs",
     title: "Accident Repairs",
-    text: "Insurance-approved and private accident repair, from cosmetic knocks to structural work — returning every panel, line and finish to the standard it left the factory with.",
+    text: "Insurance-approved and private accident repair, from cosmetic knocks to structural work, returning every panel, line and finish to the standard it left the factory with.",
   },
   {
     id: "body-kits",
@@ -22,17 +22,17 @@ const SERVICES = [
   {
     id: "restorations",
     title: "Restorations",
-    text: "Ground-up and classic restoration — bodywork, paint and interior refurbishment — bringing tired and historic cars back to their best, panel by panel.",
+    text: "Ground-up and classic restoration covering bodywork, paint and interior refurbishment, bringing tired and historic cars back to their best, panel by panel.",
   },
   {
     id: "tints-sprays-wraps",
     title: "Tints, Sprays & Wraps",
-    text: "Full and partial resprays, colour-change vinyl wraps, paint protection film and window tints — a flawless new finish, whether permanent or reversible.",
+    text: "Full and partial resprays, colour-change vinyl wraps, paint protection film and window tints, for a flawless new finish, whether permanent or reversible.",
   },
   {
     id: "smart-repairs",
     title: "SMART Repairs",
-    text: "Fast, localised repair for scuffs, scratches, stone chips and kerbed wheels — a precise, cost-effective fix without respraying the whole panel.",
+    text: "Fast, localised repair for scuffs, scratches, stone chips and kerbed wheels, a precise, cost-effective fix without respraying the whole panel.",
   },
 ];
 
@@ -44,7 +44,7 @@ export default function ServicesPage() {
         <h1 className={styles.title}>Services</h1>
         <p className={styles.intro}>
           From insurance-approved accident repair to concours-grade resprays and
-          full restoration — every process carried out in-house to the standard
+          full restoration, every process carried out in-house to the standard
           London&rsquo;s finest cars deserve.
         </p>
       </header>

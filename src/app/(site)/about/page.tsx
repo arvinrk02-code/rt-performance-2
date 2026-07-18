@@ -4,7 +4,7 @@ import styles from "../page.module.css";
 export const metadata: Metadata = {
   title: "About Us | RT Performance",
   description:
-    "The story behind RT Performance — the Wembley bodyshop, our approvals and our booth — and what customers say about the work.",
+    "The story behind RT Performance: our Wembley bodyshop, our approvals and our booth, and what customers say about the work.",
 };
 
 export default function AboutPage() {
@@ -20,7 +20,7 @@ export default function AboutPage() {
         </p>
       </header>
       <section className={styles.body}>
-        <p className={styles.note}>Story, approvals &amp; reviews — in build</p>
+        <p className={styles.note}>Story, approvals &amp; reviews (in build)</p>
       </section>
     </>
   );

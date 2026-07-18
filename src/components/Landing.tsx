@@ -151,7 +151,7 @@ export default function Landing() {
       <div className={styles.copy} key={slide.title}>
         <h1 className={styles.title}>{slide.title}</h1>
         {slide.sub && <p className={styles.sub}>{slide.sub}</p>}
-        <a className={styles.cta} href="/our-work">
+        <a className={styles.cta} href={`/our-work#${slide.slug}`}>
           {slide.cta}
         </a>
       </div>
