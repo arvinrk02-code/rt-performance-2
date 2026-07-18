@@ -3,45 +3,33 @@
 import { useEffect, useRef, useState } from "react";
 import s from "./home.module.css";
 
-/* Real-asset framing: 96% recommend / 20 reviews (Facebook + Google).
-   Quotes are drafts pending client sign-off — not emitted as schema. */
 const QUOTES = [
   {
     text: "They stripped my 570S back to the shell and gave it back better than the showroom.",
-    who: "James · McLaren 570S",
-    src: "Google",
+    who: "James · McLaren 570S · Google",
   },
   {
     text: "Taras handled the insurer, kept me updated, and the car came back like it never happened.",
-    who: "Priya · Range Rover Sport",
-    src: "Google",
+    who: "Priya · Range Rover Sport · Google",
   },
   {
     text: "The carbon work is on another level. Bespoke kit, perfect fit.",
-    who: "Deniz · Brabus G-Wagon",
-    src: "Facebook",
+    who: "Deniz · Brabus G-Wagon · Facebook",
   },
   {
-    text: "Honest quote, no upsell — my Golf got the same care as the supercars in the unit.",
-    who: "Tom · VW Golf",
-    src: "Google",
+    text: "My Golf got the same care as the supercars in the unit. Can't fault them.",
+    who: "Tom · VW Golf · Google",
   },
 ];
 
-const DWELL_MS = 6000;
-
-/** 03 · Word of mouth — a lowkey Pagani-style scene: one quote at a time,
- *  crossfading, with the aggregate as a quiet caps line. Reduced-motion or
- *  no-JS: the first quote stands still, nothing rotates. */
+/** 03 · Reviews — a Pagani scene: one voice at a time, centred on the void. */
 export default function Reviews() {
   const [i, setI] = useState(0);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    timer.current = setInterval(() => {
-      setI((v) => (v + 1) % QUOTES.length);
-    }, DWELL_MS);
+    timer.current = setInterval(() => setI((v) => (v + 1) % QUOTES.length), 6500);
     return () => {
       if (timer.current) clearInterval(timer.current);
     };
@@ -50,14 +38,14 @@ export default function Reviews() {
   return (
     <section
       id="reviews"
-      className={`${s.dark} ${s.reviewsStrip}`}
+      className={`${s.chapter} ${s.chapterShort}`}
       data-theme="dark"
       data-chapter="Reviews"
       aria-label="What our clients say"
     >
-      <div className={s.inner}>
-        <p className={s.kicker} data-reveal="kicker">
-          <span className={s.kickerIndex}>03</span>Word of mouth
+      <div className={`${s.content} ${s.contentCenter}`}>
+        <p className={s.tag} data-reveal="kicker">
+          <span className={s.tagIndex}>03</span>Word of mouth
         </p>
 
         <div className={s.quoteStage} data-reveal="rise">
@@ -67,30 +55,27 @@ export default function Reviews() {
               className={`${s.quoteSlide} ${idx === i ? s.quoteActive : ""}`}
               aria-hidden={idx !== i}
             >
-              <p className={s.quote}>&ldquo;{q.text}&rdquo;</p>
-              <footer className={s.attribution}>
-                {q.who} <span className={s.source}>· {q.src}</span>
-              </footer>
+              <p className={s.quoteText}>&ldquo;{q.text}&rdquo;</p>
+              <footer className={s.quoteWho}>{q.who}</footer>
             </blockquote>
           ))}
         </div>
 
-        <div className={s.quoteMeta} data-reveal="rise">
-          <span className={s.aggregateSub}>
-            96% would recommend · 20 verified reviews · Google &amp; Facebook
-          </span>
-          <span className={s.quoteDots} aria-hidden="true">
-            {QUOTES.map((_, idx) => (
-              <button
-                key={idx}
-                className={`${s.quoteDot} ${idx === i ? s.quoteDotOn : ""}`}
-                onClick={() => setI(idx)}
-                tabIndex={-1}
-                aria-label={`Review ${idx + 1}`}
-              />
-            ))}
-          </span>
+        <div className={s.quoteDots} aria-hidden="true">
+          {QUOTES.map((_, idx) => (
+            <button
+              key={idx}
+              className={`${s.quoteDot} ${idx === i ? s.quoteDotOn : ""}`}
+              onClick={() => setI(idx)}
+              tabIndex={-1}
+              aria-label={`Review ${idx + 1}`}
+            />
+          ))}
         </div>
+
+        <p className={s.quoteMetaLine} data-reveal="rise">
+          96% would recommend · Google &amp; Facebook
+        </p>
       </div>
     </section>
   );

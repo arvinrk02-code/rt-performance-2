@@ -1,8 +1,9 @@
 /* hairline-minimal form on the void — Pagani underline-field language */
 
 .form {
-  margin-top: clamp(40px, 6vh, 64px);
+  margin: clamp(40px, 6vh, 64px) auto 0;
   max-width: 760px;
+  text-align: left;
 }
 
 .row {
@@ -162,7 +163,7 @@
 }
 
 .success {
-  margin-top: clamp(40px, 6vh, 64px);
+  margin: clamp(40px, 6vh, 64px) auto 0;
   max-width: 640px;
 }
 

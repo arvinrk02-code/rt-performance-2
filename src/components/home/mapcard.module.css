@@ -7,13 +7,13 @@
   display: block;
   width: 100%;
   aspect-ratio: 16 / 11;
-  border: 1px solid var(--hairline-dark);
+  border: 1px solid var(--hairline);
   border-radius: 16px;
   overflow: hidden;
 }
 
 .iframe {
-  filter: grayscale(0.85) contrast(1.02);
+  filter: grayscale(1) invert(0.92) contrast(0.94) brightness(0.9);
 }
 
 .placeholder {
@@ -21,7 +21,7 @@
   cursor: pointer;
   background:
     radial-gradient(60% 55% at 50% 44%, rgba(225, 67, 18, 0.06), transparent 70%),
-    linear-gradient(160deg, #ececea, #dfe0dd);
+    linear-gradient(160deg, #101114, #0a0b0d);
   display: grid;
   place-content: center;
   gap: 10px;
@@ -49,13 +49,13 @@
   font-weight: 500;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--carbon);
+  color: rgba(245,245,245,0.9);
 }
 
 .addr {
   font-family: var(--font-mono);
   font-size: 12px;
-  color: rgba(11, 12, 14, 0.55);
+  color: rgba(245,245,245,0.5);
 }
 
 .directions {
@@ -65,5 +65,5 @@
   font-size: 12.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--carbon);
+  color: rgba(245,245,245,0.9);
 }

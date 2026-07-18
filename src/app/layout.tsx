@@ -10,7 +10,7 @@ const serif = Noto_Serif_Display({
 
 const sans = Inter({
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400", "500", "700"],
   variable: "--font-sans",
 });
 

@@ -7,7 +7,7 @@ import Reviews from "@/components/home/Reviews";
 import FindUs from "@/components/home/FindUs";
 import ContactSection from "@/components/home/ContactSection";
 import HomeMotion from "@/components/home/HomeMotion";
-import ChapterDots from "@/components/home/ChapterDots";
+import WaFab from "@/components/home/WaFab";
 
 /* ---- shared schema graph (§6): one @id per entity, aggregateRating and
    Review nodes deliberately withheld until real values are verified ---- */
@@ -112,7 +112,7 @@ export default function Home() {
       </main>
       <SiteFooter />
       <HomeMotion />
-      <ChapterDots />
+      <WaFab />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
