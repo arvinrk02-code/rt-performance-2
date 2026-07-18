@@ -18,8 +18,8 @@
   margin: 0 auto;
   max-width: 20ch;
   text-align: center;
-  font-family: var(--font-serif);
-  font-weight: 300;
+  font-family: var(--font-sans);
+  font-weight: 700;
   font-size: clamp(30px, 4.4vw, 66px);
   line-height: 1.06;
   letter-spacing: -0.005em;

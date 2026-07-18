@@ -169,8 +169,8 @@
 
 .successHead {
   margin: 0;
-  font-family: var(--font-serif);
-  font-weight: 300;
+  font-family: var(--font-sans);
+  font-weight: 700;
   font-size: clamp(28px, 3vw, 44px);
 }
 

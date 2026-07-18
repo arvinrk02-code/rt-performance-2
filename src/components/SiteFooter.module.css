@@ -92,8 +92,8 @@
 .close {
   max-width: 1400px;
   margin: 72px auto 0;
-  font-family: var(--font-serif);
-  font-weight: 300;
+  font-family: var(--font-sans);
+  font-weight: 700;
   font-size: clamp(34px, 4.6vw, 72px);
   line-height: 1.05;
   color: rgba(245, 245, 245, 0.92);

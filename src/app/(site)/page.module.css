@@ -19,8 +19,8 @@
 
 .title {
   margin: 0;
-  font-family: var(--font-serif);
-  font-weight: 300;
+  font-family: var(--font-sans);
+  font-weight: 700;
   font-size: clamp(40px, 7vw, 96px);
   line-height: 1.04;
   color: var(--ink);
