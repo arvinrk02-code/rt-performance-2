@@ -6,46 +6,9 @@ import Tach from "./Tach";
 import styles from "./Landing.module.css";
 
 const AUTOPLAY_MS = 7000;
-const LOADER_MS = 1900;
+const LOADER_MS = 2100;
 const BLINK_MS = 760;
 const SWAP_AT_MS = 300; // slide swaps at the bottom of the exposure dip
-
-/** Hairline fan echoing the loader's fine diagonals, anchored bottom-left. */
-function FanLines() {
-  const lines = Array.from({ length: 22 }, (_, i) => {
-    const angle = (14 + i * 2.6) * (Math.PI / 180);
-    const x0 = -4;
-    const y0 = 104;
-    const len = 150;
-    // fixed precision so SSR and client markup match exactly
-    return {
-      x1: String(x0),
-      y1: String(y0),
-      x2: (x0 + Math.cos(angle) * len).toFixed(2),
-      y2: (y0 - Math.sin(angle) * len).toFixed(2),
-    };
-  });
-  return (
-    <svg
-      className={styles.fan}
-      viewBox="0 0 100 100"
-      preserveAspectRatio="xMidYMid slice"
-      aria-hidden="true"
-    >
-      {lines.map((l, i) => (
-        <line
-          key={i}
-          x1={l.x1}
-          y1={l.y1}
-          x2={l.x2}
-          y2={l.y2}
-          stroke="rgba(255,255,255,0.09)"
-          strokeWidth="0.12"
-        />
-      ))}
-    </svg>
-  );
-}
 
 const NAV_LEFT = [
   { label: "Services", href: "#services" },
@@ -272,18 +235,22 @@ export default function Landing() {
         />
       )}
 
-      {/* loader */}
+      {/* entry gate — the RT mark arrives the way RT's work does: a fresh
+          respray curing from matte primer to a deep, clear-coated gloss. */}
       <div
-        className={`${styles.loader} ${loading ? "" : styles.loaderDone}`}
+        className={`${styles.gate} ${loading ? "" : styles.gateOpen}`}
         aria-hidden="true"
       >
-        <FanLines />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/logo/rt-performance.png"
-          alt=""
-          className={styles.loaderLogo}
-        />
+        <div className={styles.gateVoid} />
+        <span className={styles.gateMark}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/logo/rt-performance.png"
+            alt=""
+            className={styles.gateLogo}
+          />
+          <span className={styles.gateGloss} />
+        </span>
       </div>
     </div>
   );

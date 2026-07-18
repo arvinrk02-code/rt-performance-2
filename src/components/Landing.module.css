@@ -386,47 +386,112 @@
   }
 }
 
-/* ---------------------------------------------------------------- loader */
+/* ----------------------------------------- entry gate: the fresh respray */
 
-.loader {
+.gate {
   position: absolute;
   inset: 0;
   z-index: 40;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #020204;
-  opacity: 1;
-  transition: opacity 0.7s ease;
-}
-
-.loaderDone {
-  opacity: 0;
   pointer-events: none;
+  display: grid;
+  place-items: center;
 }
 
-.fan {
+/* the booth: near-black with a whisper of warm light on the floor */
+.gateVoid {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
+  z-index: 1;
+  background:
+    radial-gradient(
+      120% 78% at 50% 122%,
+      rgba(255, 116, 40, 0.06),
+      transparent 54%
+    ),
+    #020204;
+  transition: opacity 0.85s ease;
 }
 
-.loaderLogo {
-  height: 64px;
+.gateMark {
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  line-height: 0;
+}
+
+/* the mark cures: matte primer floods to rich, glossy RT orange */
+.gateLogo {
+  display: block;
+  height: 62px;
   width: auto;
-  animation: logoIn 1.2s ease both;
+  opacity: 0;
+  animation: coatCure 1.5s cubic-bezier(0.36, 0, 0.2, 1) 0.18s forwards;
 }
 
-@keyframes logoIn {
-  from {
+@keyframes coatCure {
+  0% {
     opacity: 0;
-    transform: scale(0.96);
+    filter: brightness(0.2) saturate(0.2) blur(0.7px);
+    transform: scale(0.986);
   }
-  to {
+  28% {
     opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1) saturate(1) blur(0);
     transform: scale(1);
   }
+}
+
+/* clear-coat catching the light once, constrained to the mark's shape */
+.gateGloss {
+  position: absolute;
+  inset: 0;
+  -webkit-mask: url("/logo/rt-performance.png") center / contain no-repeat;
+  mask: url("/logo/rt-performance.png") center / contain no-repeat;
+  background: linear-gradient(
+    100deg,
+    transparent 42%,
+    rgba(255, 236, 214, 0.5) 50%,
+    transparent 58%
+  );
+  background-size: 260% 100%;
+  background-position: 170% 0;
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: coatGloss 1.15s ease-out 1s forwards;
+}
+
+@keyframes coatGloss {
+  0% {
+    background-position: 170% 0;
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    background-position: -60% 0;
+    opacity: 0;
+  }
+}
+
+/* --- open: the booth lights lift, the mark hands off to the site --- */
+.gateOpen .gateVoid {
+  opacity: 0;
+}
+
+.gateOpen .gateMark {
+  opacity: 0;
+  transform: scale(1.03);
+  transition:
+    opacity 0.55s ease,
+    transform 0.7s ease;
+  animation: none;
 }
 
 /* ------------------------------------------------------------ responsive */
@@ -553,8 +618,16 @@
     animation: none;
   }
 
-  .loaderLogo {
+  /* gate: no cure/gloss — the finished mark simply appears, then fades */
+  .gateLogo {
     animation: none;
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+
+  .gateGloss {
+    display: none;
   }
 
   .numIn,
