@@ -121,7 +121,7 @@ export default function Landing() {
           {s.sub && <p className={styles.sub}>{s.sub}</p>}
           <a
             className={styles.cta}
-            href="/our-work"
+            href={`/our-work#${s.slug}`}
             tabIndex={i === index ? 0 : -1}
           >
             {s.cta}

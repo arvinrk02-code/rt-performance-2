@@ -121,10 +121,6 @@ export default function Contact() {
       <div className={styles.scrim} aria-hidden="true" />
 
       <div className={styles.inner}>
-        <span className={styles.eyebrow}>
-          <em>1.</em> Concierge
-        </span>
-
         <div className={styles.columns}>
           <div className={styles.left}>
             <h1 className={styles.title}>
@@ -260,9 +256,6 @@ export default function Contact() {
                   onClick={() => setPickerOpen(true)}
                 >
                   <span>{vehicle || "Select vehicle"}</span>
-                  <span className={styles.pickerChevron} aria-hidden="true">
-                    ›
-                  </span>
                 </button>
                 <input type="hidden" name="vehicle" value={vehicle} />
               </div>
@@ -279,9 +272,6 @@ export default function Contact() {
                   onClick={() => setServicePickerOpen(true)}
                 >
                   <span>{service || "Select service"}</span>
-                  <span className={styles.pickerChevron} aria-hidden="true">
-                    ›
-                  </span>
                 </button>
                 <input type="hidden" name="service" value={service} />
               </div>
