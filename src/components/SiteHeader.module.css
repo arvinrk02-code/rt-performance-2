@@ -24,8 +24,9 @@
   background: var(--void);
 }
 
+/* burger only exists on small screens — desktop carries every link inline */
 .burger {
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 5px;
   padding: 10px;
@@ -119,7 +120,9 @@
   inset: 0;
   z-index: 60;
   display: grid;
-  place-items: center;
+  align-items: center;
+  justify-items: start;
+  padding-left: clamp(24px, 9vw, 110px);
   background: rgba(2, 2, 4, 0.98);
   opacity: 0;
   visibility: hidden;
@@ -166,14 +169,15 @@
 .overlayNav {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: clamp(10px, 2.4vh, 22px);
-  text-align: center;
+  text-align: left;
 }
 
 .overlayLink {
   display: inline-flex;
   align-items: baseline;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 16px;
   font-family: var(--font-serif);
   font-weight: 300;
@@ -213,6 +217,10 @@
   .navLeft,
   .navRight {
     display: none;
+  }
+
+  .burger {
+    display: flex;
   }
 }
 
