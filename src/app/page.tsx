@@ -2,7 +2,7 @@ import Landing from "@/components/Landing";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import AboutPart1 from "@/components/home/AboutPart1";
-import AboutPart2 from "@/components/home/AboutPart2";
+import ServicesTabs from "@/components/home/ServicesTabs";
 import Reviews from "@/components/home/Reviews";
 import FindUs from "@/components/home/FindUs";
 import Contact from "@/components/Contact";
@@ -105,7 +105,7 @@ export default function Home() {
         </h1>
         <Landing />
         <AboutPart1 />
-        <AboutPart2 />
+        <ServicesTabs />
         <Reviews />
         <FindUs />
         <Contact />

@@ -329,8 +329,8 @@
   align-items: baseline;
   justify-content: flex-start;
   gap: 16px;
-  font-family: var(--font-serif);
-  font-weight: 300;
+  font-family: var(--font-sans);
+  font-weight: 700;
   font-size: clamp(28px, 5vw, 52px);
   line-height: 1.05;
   color: rgba(245, 245, 245, 0.86);

@@ -2,60 +2,15 @@
   position: relative;
 }
 
-.iframe,
-.placeholder {
+.iframe {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 11;
-  border: 1px solid var(--hairline);
+  border: 1px solid var(--hairline-dark);
   border-radius: 16px;
   overflow: hidden;
-}
-
-.iframe {
-  filter: grayscale(1) invert(0.92) contrast(0.94) brightness(0.9);
-}
-
-.placeholder {
-  position: relative;
-  cursor: pointer;
-  background:
-    radial-gradient(60% 55% at 50% 44%, rgba(225, 67, 18, 0.06), transparent 70%),
-    linear-gradient(160deg, #101114, #0a0b0d);
-  display: grid;
-  place-content: center;
-  gap: 10px;
-  text-align: center;
-  transition: filter 0.25s ease;
-}
-
-.placeholder:hover {
-  filter: brightness(1.03);
-}
-
-.pin {
-  width: 16px;
-  height: 16px;
-  margin: 0 auto 4px;
-  border-radius: 50% 50% 50% 0;
-  background: var(--ember);
-  transform: rotate(-45deg);
-  box-shadow: 0 6px 14px rgba(225, 67, 18, 0.35);
-}
-
-.viewMap {
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(245,245,245,0.9);
-}
-
-.addr {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: rgba(245,245,245,0.5);
+  /* light-desaturated so the map reads calm on the paper field */
+  filter: grayscale(0.55) contrast(1.02);
 }
 
 .directions {
@@ -65,5 +20,5 @@
   font-size: 12.5px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(245,245,245,0.9);
+  color: var(--carbon);
 }
