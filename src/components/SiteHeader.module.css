@@ -1,0 +1,246 @@
+/* ------------------------------------------------------------------- nav */
+
+.nav {
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  height: 92px;
+  padding: 0 0 0 28px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+/* transparent, floating over the hero (Home) */
+.hero {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+/* solid, sticky at the top of sub-pages */
+.solid {
+  position: sticky;
+  top: 0;
+  background: var(--void);
+}
+
+.burger {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px;
+  margin-right: 30px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.burger span {
+  display: block;
+  height: 1.5px;
+  background: #fff;
+}
+
+.burger span:nth-child(1) {
+  width: 22px;
+}
+.burger span:nth-child(2) {
+  width: 16px;
+}
+.burger span:nth-child(3) {
+  width: 22px;
+}
+
+.navLeft,
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+}
+
+.navRight {
+  margin-left: auto;
+}
+
+.navLeft a,
+.navRight a {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.92);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.navLeft a:hover,
+.navRight a:hover {
+  color: #fff;
+}
+
+.brand {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 0;
+}
+
+.brand img {
+  display: block;
+  height: 40px;
+  width: auto;
+}
+
+.navContact {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
+  border-left: 1px solid var(--hairline);
+  height: 92px;
+}
+
+.navLeft a:focus-visible,
+.navRight a:focus-visible,
+.burger:focus-visible,
+.close:focus-visible,
+.overlayLink:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ------------------------------------------------------- full-screen menu */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  background: rgba(2, 2, 4, 0.98);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.45s ease,
+    visibility 0s linear 0.45s;
+}
+
+.overlayOpen {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.45s ease,
+    visibility 0s;
+}
+
+.close {
+  position: absolute;
+  top: 30px;
+  right: 34px;
+  width: 42px;
+  height: 42px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.close span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 1.5px;
+  background: #fff;
+}
+
+.close span:nth-child(1) {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.close span:nth-child(2) {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.overlayNav {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 2.4vh, 22px);
+  text-align: center;
+}
+
+.overlayLink {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 16px;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(28px, 5vw, 52px);
+  line-height: 1.05;
+  color: rgba(245, 245, 245, 0.86);
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    color 0.25s ease,
+    opacity 0.5s ease,
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.overlayOpen .overlayLink {
+  opacity: 1;
+  transform: none;
+}
+
+.overlayLink:hover {
+  color: #fff;
+}
+
+.overlayIndex {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--ember);
+  align-self: center;
+}
+
+/* ------------------------------------------------------------ responsive */
+
+@media (max-width: 1100px) {
+  .navLeft,
+  .navRight {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .nav {
+    height: 64px;
+    padding-left: 16px;
+  }
+
+  .navContact {
+    height: 64px;
+  }
+
+  .brand img {
+    height: 26px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .overlayOpen {
+    transition:
+      opacity 0.001s,
+      visibility 0s;
+  }
+
+  .overlayLink {
+    transition: color 0.2s ease;
+    transform: none;
+  }
+}

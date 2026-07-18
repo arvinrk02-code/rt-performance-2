@@ -1,0 +1,49 @@
+/* shared scaffold for the sub-page stubs — the Mansory-style page header,
+   carried on every heading until each page gets its full build */
+
+.head {
+  padding: clamp(120px, 20vh, 220px) 7% clamp(56px, 9vh, 100px);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.eyebrow {
+  display: block;
+  margin: 0 0 22px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(40px, 7vw, 96px);
+  line-height: 1.04;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.intro {
+  margin: 28px 0 0;
+  max-width: 52ch;
+  font-family: var(--font-sans);
+  font-size: clamp(14px, 1.15vw, 17px);
+  line-height: 1.65;
+  color: rgba(245, 245, 245, 0.72);
+}
+
+.body {
+  padding: clamp(56px, 9vh, 110px) 7%;
+}
+
+.note {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(245, 245, 245, 0.4);
+}

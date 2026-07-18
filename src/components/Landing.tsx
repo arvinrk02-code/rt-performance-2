@@ -3,24 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SLIDES } from "./slides";
 import Tach from "./Tach";
+import SiteHeader from "./SiteHeader";
 import styles from "./Landing.module.css";
 
 const AUTOPLAY_MS = 7000;
 const LOADER_MS = 2100;
 const BLINK_MS = 760;
 const SWAP_AT_MS = 300; // slide swaps at the bottom of the exposure dip
-
-const NAV_LEFT = [
-  { label: "Services", href: "#services" },
-  { label: "Our Work", href: "#work" },
-  { label: "Restoration", href: "#restoration" },
-  { label: "Wheels", href: "#wheels" },
-];
-
-const NAV_RIGHT = [
-  { label: "Reviews", href: "#reviews" },
-  { label: "Find Us", href: "#find-us" },
-];
 
 export default function Landing() {
   const [loading, setLoading] = useState(true);
@@ -162,40 +151,13 @@ export default function Landing() {
       <div className={styles.copy} key={slide.title}>
         <h1 className={styles.title}>{slide.title}</h1>
         {slide.sub && <p className={styles.sub}>{slide.sub}</p>}
-        <a className={styles.cta} href="#contact">
+        <a className={styles.cta} href="/contact">
           {slide.cta}
         </a>
       </div>
 
-      {/* nav */}
-      <header className={styles.nav} aria-label="Main">
-        <button className={styles.burger} aria-label="Menu">
-          <span />
-          <span />
-          <span />
-        </button>
-        <nav className={styles.navLeft}>
-          {NAV_LEFT.map((l) => (
-            <a key={l.label} href={l.href}>
-              {l.label}
-            </a>
-          ))}
-        </nav>
-        <a href="/" className={styles.brand} aria-label="RT Performance — home">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo/rt-performance.png" alt="RT Performance" />
-        </a>
-        <nav className={styles.navRight}>
-          {NAV_RIGHT.map((l) => (
-            <a key={l.label} href={l.href}>
-              {l.label}
-            </a>
-          ))}
-          <a href="#contact" className={styles.navContact}>
-            Contact Us
-          </a>
-        </nav>
-      </header>
+      {/* shared nav — transparent, floating over the hero */}
+      <SiteHeader variant="hero" />
 
       {/* the instrument — rev-counter as odometer, selector and progress */}
       <div className={styles.tach}>

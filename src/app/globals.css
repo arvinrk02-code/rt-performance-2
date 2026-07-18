@@ -1,5 +1,11 @@
 :root {
   color-scheme: dark;
+
+  /* --- design tokens: the Mansory-style luxury language, shared site-wide --- */
+  --void: #020204; /* near-black stage / page background */
+  --ink: #f5f5f5; /* primary text */
+  --ember: #e14312; /* the single warm accent, used sparingly */
+  --hairline: rgba(255, 255, 255, 0.14); /* thin dividing rules */
 }
 
 * {
@@ -13,21 +19,20 @@ body {
 
 body {
   margin: 0;
-  background: #020204;
-  color: #f5f5f5;
+  background: var(--void);
+  color: var(--ink);
   font-family: var(--font-sans), "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
 }
 
 a:focus-visible,
 button:focus-visible {
-  outline: 2px solid #829fb0;
+  outline: 2px solid var(--ember);
   outline-offset: 3px;
 }
 
 ::selection {
-  background: #829fb0;
-  color: #020204;
+  background: var(--ember);
+  color: var(--void);
 }
