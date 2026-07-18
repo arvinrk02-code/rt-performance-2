@@ -60,6 +60,7 @@ export default function Tach({
   const raf = useRef(0);
   const rafCreep = useRef(0);
   const needleRef = useRef<SVGGElement | null>(null);
+  const prevIndexRef = useRef(index); // to recognise the last→first wrap
   const rotRef = useRef(rot);
   useEffect(() => {
     rotRef.current = rot;
@@ -80,26 +81,39 @@ export default function Tach({
   };
 
   useEffect(() => {
+    const from = prevIndexRef.current;
+    prevIndexRef.current = index;
     if (reduceMotion) {
       setTrans("none");
       setRot(toScreen(tickAngle(index)));
       return;
     }
     const target = toScreen(tickAngle(index));
-    // Freeze at the true current angle first: if the needle was already
-    // creeping toward this very graduation, the CSS target wouldn't change
-    // and no transition would restart — the whip would be silently lost.
-    // Freezing then springing guarantees the 620ms flick every time.
-    setTrans("none");
-    setRot(currentAngle());
     cancelAnimationFrame(raf.current);
     cancelAnimationFrame(rafCreep.current);
-    raf.current = requestAnimationFrame(() => {
+    if (from === count - 1 && index === 0) {
+      // Limiter reset (last car → first): the film dip is fully black when
+      // this commit lands, so the needle goes home INSTANTLY under cover.
+      // A 620ms spring here would still be sweeping backward — overshooting
+      // off-scale past graduation 1 — as the first scene fades back in,
+      // which read as the screen glitching. Snap = scene 1 opens with a
+      // settled instrument, like every other autoplay cut.
+      setTrans("none");
+      setRot(target);
+    } else {
+      // Freeze at the true current angle first: if the needle was already
+      // creeping toward this very graduation, the CSS target wouldn't change
+      // and no transition would restart — the whip would be silently lost.
+      // Freezing then springing guarantees the 620ms flick every time.
+      setTrans("none");
+      setRot(currentAngle());
       raf.current = requestAnimationFrame(() => {
-        setTrans(`transform ${SWING_MS}ms ${SWING_EASE}`);
-        setRot(target);
+        raf.current = requestAnimationFrame(() => {
+          setTrans(`transform ${SWING_MS}ms ${SWING_EASE}`);
+          setRot(target);
+        });
       });
-    });
+    }
     if (!live || index >= count - 1) return; // rest at redline on the last car
     // …then creep toward the next one for the rest of the dwell
     // (own rAF handle — must never cancel a whip that hasn't fired yet)
