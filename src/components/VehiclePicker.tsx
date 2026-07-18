@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { MARQUES, type Marque } from "./vehicles";
+import { getLenis } from "@/lib/motion";
 import styles from "./Picker.module.css";
 
 interface VehiclePickerProps {
@@ -25,6 +26,10 @@ export default function VehiclePicker({ onClose, onSelect }: VehiclePickerProps)
     restoreRef.current = document.activeElement as HTMLElement | null;
     const { overflow } = document.body.style;
     document.body.style.overflow = "hidden";
+    // The home one-pager runs Lenis smooth scroll, which ignores body overflow;
+    // pause it so wheel/touch don't drive the page behind the modal.
+    const lenis = getLenis();
+    lenis?.stop();
 
     dialogRef.current?.querySelector<HTMLElement>("[data-vp-focus]")?.focus();
 
@@ -55,6 +60,7 @@ export default function VehiclePicker({ onClose, onSelect }: VehiclePickerProps)
     return () => {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = overflow;
+      lenis?.start();
       restoreRef.current?.focus?.();
     };
   }, [onClose]);
@@ -84,6 +90,7 @@ export default function VehiclePicker({ onClose, onSelect }: VehiclePickerProps)
         aria-modal="true"
         aria-label="Choose your vehicle"
         onClick={(e) => e.stopPropagation()}
+        data-lenis-prevent
       >
         <header className={styles.head}>
           {atModels ? (
