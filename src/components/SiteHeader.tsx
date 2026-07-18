@@ -132,7 +132,7 @@ export default function SiteHeader({ variant = "solid" }: { variant?: Variant })
             </Link>
           ))}
           <Link href="/#contact" className={styles.navContact}>
-            Get a Quote
+            Contact Us
           </Link>
         </nav>
       </header>

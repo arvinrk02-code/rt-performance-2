@@ -85,6 +85,25 @@ export default function HomeMotion() {
           },
         });
       });
+
+      // Cayenne-style scrubbed parallax on imagery (±8%, transform only)
+      gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((el) => {
+        gsap.fromTo(
+          el,
+          { yPercent: -6, scale: 1.08 },
+          {
+            yPercent: 6,
+            scale: 1.08,
+            ease: "none",
+            scrollTrigger: {
+              trigger: el.parentElement,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: true,
+            },
+          }
+        );
+      });
     });
 
     return () => {

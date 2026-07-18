@@ -521,3 +521,218 @@
   font-weight: 300;
   font-size: clamp(24px, 2.6vw, 38px);
 }
+
+/* ============ additions: photo card, review strip, pipes, dots ============ */
+
+/* SC Group rounded full-bleed photo card */
+.photoCard {
+  margin: clamp(56px, 9vh, 100px) 0 0;
+  position: relative;
+  overflow: clip;
+  border-radius: 18px;
+}
+
+.photoCard img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 82vh;
+  object-fit: cover;
+  will-change: transform;
+}
+
+.photoCaption {
+  margin-top: 14px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.credLine {
+  margin: clamp(48px, 7vh, 72px) 0 0;
+  padding-top: 22px;
+  border-top: 1px solid var(--hairline-dark);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(11, 12, 14, 0.45);
+}
+
+/* ---- lowkey reviews strip ---- */
+.reviewsStrip .inner {
+  padding-top: clamp(72px, 10vh, 120px);
+  padding-bottom: clamp(72px, 10vh, 120px);
+}
+
+.quoteStage {
+  position: relative;
+  margin-top: clamp(36px, 6vh, 64px);
+  min-height: 11em;
+}
+
+.quoteSlide {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  transition: opacity 900ms ease;
+  pointer-events: none;
+}
+
+.quoteActive {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.quoteMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: clamp(30px, 5vh, 48px);
+  padding-top: 20px;
+  border-top: 1px solid var(--hairline);
+}
+
+.quoteMeta .aggregateSub {
+  width: auto;
+}
+
+.quoteDots {
+  display: inline-flex;
+  gap: 10px;
+}
+
+.quoteDot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.quoteDotOn {
+  background: rgba(255, 255, 255, 0.9);
+  transform: scale(1.25);
+}
+
+/* ---- Pagani pipe-separated text links ---- */
+.pipeLinks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin: 6px 0 0;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.pipeLinks a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition: border-color 0.25s ease;
+}
+
+.pipeLinks a:hover {
+  border-bottom-color: currentColor;
+}
+
+.pipeLinks span {
+  color: rgba(127, 127, 127, 0.5);
+  font-weight: 400;
+}
+
+.pipeLinksDark {
+  margin-top: clamp(28px, 4vh, 40px);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.findNote {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.65;
+  color: rgba(11, 12, 14, 0.6);
+  max-width: 34ch;
+}
+
+.findGrid > div > div + div {
+  margin-top: 30px;
+}
+
+/* ---- SC Group split: text | rounded media, hover zoom ---- */
+.split {
+  display: grid;
+  gap: clamp(36px, 5vw, 80px);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .split {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.splitMedia {
+  margin: 0;
+}
+
+.mediaFrame {
+  overflow: clip;
+  border-radius: 18px;
+}
+
+.mediaFrame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.splitMediaTall .mediaFrame img {
+  aspect-ratio: 4 / 5;
+}
+
+.mediaFrame:hover img {
+  transform: scale(1.045);
+}
+
+.photoCaptionLight {
+  color: rgba(11, 12, 14, 0.45);
+}
+
+/* interactive service rows: arrow slides in on hover */
+.svcRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.svcArrow {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  color: rgba(11, 12, 14, 0.75);
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.svcRow:hover .svcArrow {
+  opacity: 1;
+  transform: none;
+}

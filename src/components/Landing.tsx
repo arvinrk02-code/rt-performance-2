@@ -157,6 +157,19 @@ export default function Landing() {
         </div>
       </div>
 
+      {/* scroll cue — Pagani-style, quiet, bottom-right */}
+      <a href="#about" className={styles.scrollCue} aria-label="Scroll to About">
+        <span>Scroll</span>
+        <svg width="10" height="24" viewBox="0 0 10 24" aria-hidden="true">
+          <path
+            d="M5 0 V20 M1 16 L5 21 L9 16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.2"
+          />
+        </svg>
+      </a>
+
       {/* entry gate — the RT mark arrives the way RT's work does: a fresh
           respray curing from matte primer to a deep, clear-coated gloss. */}
       <div
