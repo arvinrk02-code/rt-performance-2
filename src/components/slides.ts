@@ -1,4 +1,27 @@
+/** One slug per car — the single key that binds the home slider (identity)
+ *  to the Our Work case studies (narrative + gallery). */
+export type CarSlug =
+  | "mclaren-570s"
+  | "rolls-royce-cullinan"
+  | "ferrari-458"
+  | "mercedes-amg-g63"
+  | "lamborghini-sian"
+  | "bentley-continental-gt"
+  | "mercedes-g500-4x4";
+
+/** Manufacturer, used to pick the rail logo (public/logos/<marque>.svg).
+ *  Both G-Wagens share "mercedes". */
+export type Marque =
+  | "mclaren"
+  | "rolls-royce"
+  | "ferrari"
+  | "mercedes"
+  | "lamborghini"
+  | "bentley";
+
 export interface Slide {
+  slug: CarSlug;
+  marque: Marque;
   img: string;
   title: string;
   /** Short name shown under the gauge. */
@@ -15,13 +38,17 @@ export interface Slide {
  * vibrant opener, clean monochrome close. */
 export const SLIDES: Slide[] = [
   {
+    slug: "mclaren-570s",
+    marque: "mclaren",
     img: "/slides/hero-mclaren-570s.jpg",
     title: "McLaren 570S",
     short: "570S",
-    sub: "From stripped shell to showroom — a complete rebuild",
+    sub: "From stripped shell to showroom, a complete rebuild",
     cta: "View the work",
   },
   {
+    slug: "rolls-royce-cullinan",
+    marque: "rolls-royce",
     img: "/slides/hero-rolls-royce-cullinan.jpg",
     title: "Rolls-Royce Cullinan",
     short: "Cullinan",
@@ -30,6 +57,8 @@ export const SLIDES: Slide[] = [
     contain: true,
   },
   {
+    slug: "ferrari-458",
+    marque: "ferrari",
     img: "/slides/hero-ferrari-458.jpg",
     title: "Ferrari 458 Italia",
     short: "458 Italia",
@@ -37,6 +66,8 @@ export const SLIDES: Slide[] = [
     cta: "View the work",
   },
   {
+    slug: "mercedes-amg-g63",
+    marque: "mercedes",
     img: "/slides/hero-mercedes-amg-g63.jpg",
     title: "Mercedes-AMG G 63",
     short: "AMG G 63",
@@ -44,6 +75,8 @@ export const SLIDES: Slide[] = [
     cta: "View the work",
   },
   {
+    slug: "lamborghini-sian",
+    marque: "lamborghini",
     img: "/slides/hero-lamborghini-sian.jpg",
     title: "Lamborghini Sián FKP 37",
     short: "Sián FKP 37",
@@ -51,6 +84,8 @@ export const SLIDES: Slide[] = [
     cta: "View the work",
   },
   {
+    slug: "bentley-continental-gt",
+    marque: "bentley",
     img: "/slides/hero-bentley-continental-gt.jpg",
     title: "Bentley Continental GT",
     short: "Continental GT",
@@ -59,6 +94,8 @@ export const SLIDES: Slide[] = [
     contain: true,
   },
   {
+    slug: "mercedes-g500-4x4",
+    marque: "mercedes",
     img: "/slides/hero-mercedes-g500-4x4.jpg",
     title: "Mercedes G 500 4×4²",
     short: "G 500 4×4²",

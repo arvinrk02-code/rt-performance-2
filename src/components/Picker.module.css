@@ -1,0 +1,389 @@
+/* Shared modal picker — used by the vehicle picker (marque logo grid → model
+   list) and the service picker (numbered service rows). Echoes the Lightbox:
+   dark blurred scrim, hairline-framed panel, circular close. */
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(2, 2, 4, 0.86);
+  backdrop-filter: blur(3px);
+  animation: scrimIn 0.28s ease both;
+}
+
+.dialog {
+  position: relative;
+  width: min(720px, 100%);
+  max-height: min(86vh, 720px);
+  overflow-y: auto;
+  padding: clamp(22px, 3vw, 34px);
+  background: #08080a;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6);
+  animation: dialogIn 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* --- header --------------------------------------------------------------- */
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: clamp(20px, 3vw, 30px);
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ember);
+  outline: none;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 2px;
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(245, 245, 245, 0.7);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.back:hover {
+  color: var(--ink);
+}
+
+.back span {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.close {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 1px solid var(--hairline);
+  border-radius: 50%;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.close:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* --- marque grid ---------------------------------------------------------- */
+
+.grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.tile {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--hairline);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: border-color 0.22s ease, background 0.22s ease, transform 0.22s ease;
+}
+
+.tile:hover {
+  border-color: rgba(225, 67, 18, 0.6);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+}
+
+.logo {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+  /* Logos ship with dark brand fills — render them as clean off-white marks. */
+  filter: brightness(0) invert(1);
+  opacity: 0.82;
+  transition: opacity 0.22s ease;
+}
+
+.tile:hover .logo {
+  opacity: 1;
+}
+
+.otherMark {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 34px;
+  color: rgba(245, 245, 245, 0.6);
+  transition: color 0.22s ease;
+}
+
+.tile:hover .otherMark {
+  color: var(--ember);
+}
+
+.tileName {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: rgba(245, 245, 245, 0.72);
+  text-align: center;
+}
+
+/* --- model list ----------------------------------------------------------- */
+
+.marqueHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 18px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.marqueLogo {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+.marqueName {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(22px, 3vw, 30px);
+  color: var(--ink);
+}
+
+.modelList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.model {
+  width: 100%;
+  padding: 13px 12px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--hairline);
+  border-radius: 2px;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  color: rgba(245, 245, 245, 0.85);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.model:hover {
+  border-color: rgba(225, 67, 18, 0.6);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ink);
+}
+
+/* --- free-text row -------------------------------------------------------- */
+
+.customRow {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--hairline);
+}
+
+.customInput {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 13px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 2px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--ink);
+  transition: border-color 0.2s ease;
+}
+
+.customInput::placeholder {
+  color: rgba(245, 245, 245, 0.32);
+}
+
+.customInput:focus {
+  outline: none;
+  border-color: rgba(225, 67, 18, 0.75);
+}
+
+.customBtn {
+  padding: 11px 18px;
+  white-space: nowrap;
+  background: rgba(225, 67, 18, 0.12);
+  border: 1px solid rgba(225, 67, 18, 0.55);
+  border-radius: 2px;
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.customBtn:hover:not(:disabled) {
+  background: rgba(225, 67, 18, 0.22);
+  border-color: var(--ember);
+}
+
+.customBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* --- service list (numbered rows, à la the Services page) ----------------- */
+
+.serviceList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.service {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  column-gap: 18px;
+  align-items: baseline;
+  text-align: left;
+  padding: 20px 6px;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--hairline);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.serviceList li:last-child .service {
+  border-bottom: 1px solid var(--hairline);
+}
+
+.service:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.svcIndex {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 18px;
+  color: var(--ember);
+}
+
+.svcTitle {
+  display: block;
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(19px, 2.4vw, 24px);
+  line-height: 1.2;
+  color: var(--ink);
+  transition: color 0.2s ease;
+}
+
+.service:hover .svcTitle {
+  color: var(--ember);
+}
+
+.svcText {
+  display: block;
+  margin: 6px 0 0;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(245, 245, 245, 0.55);
+}
+
+/* --- motion --------------------------------------------------------------- */
+
+@keyframes scrimIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dialogIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrim,
+  .dialog {
+    animation: none;
+  }
+  .tile:hover {
+    transform: none;
+  }
+}
+
+/* --- responsive ----------------------------------------------------------- */
+
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .modelList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 380px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

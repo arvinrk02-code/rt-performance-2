@@ -1,0 +1,323 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import VehiclePicker from "./VehiclePicker";
+import ServicePicker from "./ServicePicker";
+import styles from "./Contact.module.css";
+
+/* Real contact details — mirrored from SiteFooter. */
+const PHONE_DISPLAY = "+44 (0)20 8900 0014";
+const PHONE_TEL = "tel:+442089000014";
+const WHATSAPP_URL = "https://wa.me/447704155514";
+const EMAIL = "info@rt-performance.com";
+
+const CONTACT_METHODS = ["Phone", "WhatsApp", "Email"] as const;
+
+/* Thin-stroke ember icons for the contact rail. */
+function PhoneIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2" />
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <rect x="3" y="5" width="18" height="14" rx="1" />
+      <path d="m3 7 9 6 9-6" />
+    </svg>
+  );
+}
+
+function WhatsAppIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.7-1.2A9 9 0 1 0 12 3" />
+      <path d="M8.8 8.9c-.3 2.4 4 6.6 6.4 6.3l1-1.2-2.1-1.4-.9.7c-1-.5-1.9-1.4-2.4-2.4l.7-.9-1.4-2.1z" />
+    </svg>
+  );
+}
+
+function PinIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11" />
+      <circle cx="12" cy="10" r="2.6" />
+    </svg>
+  );
+}
+
+export default function Contact() {
+  const [method, setMethod] = useState<(typeof CONTACT_METHODS)[number]>("Phone");
+  const [vehicle, setVehicle] = useState("");
+  const [service, setService] = useState("");
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [servicePickerOpen, setServicePickerOpen] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  /* No mail backend yet — compose the enquiry into the visitor's email app.
+     Swap this for an API route + provider when one is chosen. */
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    const get = (k: string) => String(data.get(k) ?? "").trim();
+
+    const vehicle = get("vehicle");
+    const subject = `Consultation request${vehicle ? ` — ${vehicle}` : ""}`;
+    const body = [
+      `Name: ${get("name")}`,
+      `Email: ${get("email")}`,
+      `Phone: ${get("phone") || "—"}`,
+      `Preferred contact: ${get("method")}`,
+      `Vehicle: ${vehicle || "—"}`,
+      `Service required: ${get("service") || "—"}`,
+      "",
+      get("message"),
+    ].join("\n");
+
+    window.location.href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    setSent(true);
+  }
+
+  return (
+    <section className={styles.stage}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        className={styles.photo}
+        src="/work/rolls-royce-cullinan/01.jpg"
+        alt=""
+        aria-hidden="true"
+      />
+      <div className={styles.scrim} aria-hidden="true" />
+
+      <div className={styles.inner}>
+        <span className={styles.eyebrow}>
+          <em>1.</em> Concierge
+        </span>
+
+        <div className={styles.columns}>
+          <div className={styles.left}>
+            <h1 className={styles.title}>
+              Let&rsquo;s discuss
+              <br />
+              your vehicle.
+            </h1>
+            <p className={styles.lede}>
+              Every project begins
+              <br />
+              with a conversation.
+            </p>
+
+            <ul className={styles.methods}>
+              <li>
+                <a className={styles.method} href={PHONE_TEL}>
+                  <span className={styles.icon}>
+                    <PhoneIcon />
+                  </span>
+                  <span>
+                    <span className={styles.methodMain}>{PHONE_DISPLAY}</span>
+                    <span className={styles.methodSub}>Speak to our team</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a className={styles.method} href={`mailto:${EMAIL}`}>
+                  <span className={styles.icon}>
+                    <MailIcon />
+                  </span>
+                  <span>
+                    <span className={styles.methodMain}>{EMAIL}</span>
+                    <span className={styles.methodSub}>Email us anytime</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a
+                  className={styles.method}
+                  href={WHATSAPP_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span className={styles.icon}>
+                    <WhatsAppIcon />
+                  </span>
+                  <span>
+                    <span className={styles.methodMain}>WhatsApp</span>
+                    <span className={styles.methodSub}>Message us directly</span>
+                  </span>
+                </a>
+              </li>
+              <li>
+                <Link className={styles.method} href="/find-us">
+                  <span className={styles.icon}>
+                    <PinIcon />
+                  </span>
+                  <span>
+                    <span className={styles.methodMain}>The Workshop</span>
+                    <span className={styles.methodSub}>
+                      Unit 10 Fourth Way,
+                      <br />
+                      Wembley, London HA9 0LH
+                    </span>
+                  </span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <form className={styles.form} onSubmit={handleSubmit} aria-label="Enquiry">
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="c-name">
+                Your name
+              </label>
+              <input
+                className={styles.input}
+                id="c-name"
+                name="name"
+                type="text"
+                autoComplete="name"
+                required
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="c-email">
+                Email address
+              </label>
+              <input
+                className={styles.input}
+                id="c-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="c-phone">
+                Phone number
+              </label>
+              <input
+                className={styles.input}
+                id="c-phone"
+                name="phone"
+                type="tel"
+                autoComplete="tel"
+                required={method !== "Email"}
+              />
+            </div>
+
+            <div className={styles.row}>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="c-vehicle">
+                  Vehicle
+                </label>
+                <button
+                  type="button"
+                  id="c-vehicle"
+                  className={`${styles.input} ${styles.picker} ${
+                    vehicle ? "" : styles.pickerEmpty
+                  }`}
+                  onClick={() => setPickerOpen(true)}
+                >
+                  <span>{vehicle || "Select vehicle"}</span>
+                  <span className={styles.pickerChevron} aria-hidden="true">
+                    ›
+                  </span>
+                </button>
+                <input type="hidden" name="vehicle" value={vehicle} />
+              </div>
+              <div className={styles.field}>
+                <label className={styles.label} htmlFor="c-service">
+                  Service required
+                </label>
+                <button
+                  type="button"
+                  id="c-service"
+                  className={`${styles.input} ${styles.picker} ${
+                    service ? "" : styles.pickerEmpty
+                  }`}
+                  onClick={() => setServicePickerOpen(true)}
+                >
+                  <span>{service || "Select service"}</span>
+                  <span className={styles.pickerChevron} aria-hidden="true">
+                    ›
+                  </span>
+                </button>
+                <input type="hidden" name="service" value={service} />
+              </div>
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="c-method">
+                Preferred contact method
+              </label>
+              <select
+                className={`${styles.input} ${styles.select}`}
+                id="c-method"
+                name="method"
+                value={method}
+                onChange={(e) =>
+                  setMethod(e.target.value as (typeof CONTACT_METHODS)[number])
+                }
+              >
+                {CONTACT_METHODS.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className={styles.field}>
+              <label className={styles.label} htmlFor="c-message">
+                Tell us about your project
+              </label>
+              <textarea
+                className={`${styles.input} ${styles.textarea}`}
+                id="c-message"
+                name="message"
+                rows={5}
+                required
+              />
+            </div>
+
+            <button className={styles.submit} type="submit">
+              Arrange Consultation <span aria-hidden="true">&rarr;</span>
+            </button>
+
+            <p className={styles.hint} aria-live="polite">
+              {sent
+                ? `Your email app should now be open with your enquiry — if not, email ${EMAIL} directly.`
+                : ""}
+            </p>
+          </form>
+        </div>
+      </div>
+
+      {pickerOpen && (
+        <VehiclePicker
+          onClose={() => setPickerOpen(false)}
+          onSelect={(v) => {
+            setVehicle(v);
+            setPickerOpen(false);
+          }}
+        />
+      )}
+
+      {servicePickerOpen && (
+        <ServicePicker
+          onClose={() => setServicePickerOpen(false)}
+          onSelect={(s) => {
+            setService(s);
+            setServicePickerOpen(false);
+          }}
+        />
+      )}
+    </section>
+  );
+}

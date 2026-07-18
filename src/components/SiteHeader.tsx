@@ -120,7 +120,7 @@ export default function SiteHeader({ variant = "solid" }: { variant?: Variant })
           )}
         </nav>
 
-        <Link href="/" className={styles.brand} aria-label="RT Performance — home">
+        <Link href="/" className={styles.brand} aria-label="RT Performance home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/logo/rt-performance.png" alt="RT Performance" />
         </Link>
