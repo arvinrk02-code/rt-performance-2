@@ -38,7 +38,7 @@ export default function Reviews() {
   return (
     <section
       id="reviews"
-      className={`${s.chapter} ${s.chapterShort}`}
+      className={`${s.chapter} ${s.chapterShort} ${s.orange}`}
       data-theme="dark"
       data-chapter="Reviews"
       aria-label="What our clients say"

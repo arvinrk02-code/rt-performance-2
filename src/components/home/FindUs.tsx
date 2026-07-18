@@ -6,7 +6,7 @@ export default function FindUs() {
   return (
     <section
       id="find-us"
-      className={`${s.chapter} ${s.chapterShort} ${s.findOrange}`}
+      className={`${s.chapter} ${s.chapterShort} ${s.findWhite}`}
       data-theme="dark"
       data-chapter="Find us"
       aria-labelledby="findus-h"

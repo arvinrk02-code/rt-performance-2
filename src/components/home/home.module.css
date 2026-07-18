@@ -487,44 +487,76 @@
   transform: scale(1.06);
 }
 
-/* ---- Find Us: the RT-orange chapter ---- */
-.findOrange {
+/* ---- the RT-orange chapter (Reviews) ---- */
+.orange {
   background: linear-gradient(180deg, #e64514 0%, var(--ember) 55%, #cf3c0f 100%);
 }
 
-.findOrange .tag {
-  color: rgba(26, 10, 5, 0.65);
+.orange .tag {
+  color: rgba(26, 10, 5, 0.6);
 }
 
-.findOrange .headline {
+.orange .headline,
+.orange .quoteText {
   color: #fff;
 }
 
-.findOrange .findLabel {
-  color: rgba(26, 10, 5, 0.62);
+.orange .quoteWho {
+  color: rgba(26, 10, 5, 0.72);
 }
 
-.findOrange .findValue {
-  color: #fff;
+.orange .quoteMetaLine {
+  color: rgba(26, 10, 5, 0.6);
 }
 
-.findOrange .findSmall {
-  color: rgba(255, 255, 255, 0.82);
+.orange .quoteDot {
+  background: rgba(26, 10, 5, 0.3);
 }
 
-.findOrange .pipes a {
-  color: #fff;
+.orange .quoteDotOn {
+  background: #fff;
 }
 
-.findOrange .pipes a:hover {
-  border-bottom-color: rgba(255, 255, 255, 0.85);
-}
-
-.findOrange .pipes span {
-  color: rgba(26, 10, 5, 0.45);
-}
-
-.findOrange a:focus-visible,
-.findOrange button:focus-visible {
+.orange a:focus-visible,
+.orange button:focus-visible {
   outline-color: #fff;
+}
+
+/* ---- Find Us: the white/light chapter ---- */
+.findWhite {
+  background: var(--paper);
+}
+
+.findWhite .tag {
+  color: rgba(11, 12, 14, 0.5);
+}
+
+.findWhite .headline,
+.findWhite .findValue {
+  color: var(--carbon);
+}
+
+.findWhite .findLabel {
+  color: rgba(11, 12, 14, 0.5);
+}
+
+.findWhite .findSmall {
+  color: rgba(11, 12, 14, 0.6);
+}
+
+.findWhite .pipes a {
+  color: var(--carbon);
+}
+
+.findWhite .pipes a:hover {
+  border-bottom-color: rgba(11, 12, 14, 0.85);
+}
+
+.findWhite .pipes span {
+  color: rgba(11, 12, 14, 0.3);
+}
+
+/* the ::after wet-floor sheen is a white-on-dark motif — hide it on light */
+.findWhite::after {
+  display: none;
 }
