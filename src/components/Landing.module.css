@@ -408,12 +408,13 @@
 }
 
 /* ---- stacked layout (phones / portrait tablets), Mansory-style:
-   headline on solid black above the car, whole car shown (not cropped),
-   instrument overlapping the car's base, CTA at the foot ---- */
+   headline + CTA on solid black above the car, whole car shown (not cropped),
+   instrument overlapping the car's base ---- */
 @media (max-width: 900px) {
-  /* fixed ~16:9 band = full car width, only sky/floor lightly trimmed */
+  /* fixed ~16:9 band = full car width, only sky/floor lightly trimmed;
+     pushed below the headline+CTA block so nothing overlaps */
   .slide {
-    top: 27vh;
+    top: 40vh;
     bottom: auto;
     height: auto;
     aspect-ratio: 20 / 11;
@@ -440,7 +441,7 @@
   .copy {
     left: 6%;
     right: 6%;
-    top: calc(64px + 4.5vh);
+    top: calc(64px + 3vh);
     max-width: none;
     text-align: center;
   }
@@ -455,23 +456,21 @@
     max-width: 46ch;
   }
 
-  /* instrument stays with the car: overlapping its base, above the CTA */
+  /* CTA sits directly under the description, grouped with the text */
+  .cta {
+    position: static;
+    margin: 20px 0 0;
+    transform: none;
+    padding: 11px 22px;
+    white-space: nowrap;
+  }
+
+  /* instrument stays with the car: overlapping its base */
   .tach {
-    top: 51vh;
+    top: 62vh;
     bottom: auto;
     transform: translateX(-50%) scale(0.72);
     transform-origin: top center;
-  }
-
-  /* CTA at the foot, centred, clear of the instrument */
-  .cta {
-    position: absolute;
-    left: 50%;
-    top: 82vh;
-    transform: translateX(-50%);
-    margin: 0;
-    padding: 11px 22px;
-    white-space: nowrap;
   }
 }
 
