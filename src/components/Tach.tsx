@@ -15,7 +15,10 @@ const SWEEP_FROM = 210; // degrees, car 1
 const STEP = 40; // per car, clockwise
 
 const SWING_EASE = "cubic-bezier(0.3, 1.4, 0.55, 1)";
-const SWING_MS = 620;
+/* swing at constant angular speed: full dial (240°) ≈ 820ms, one step ≈ 300ms */
+const SWING_MS_PER_DIAL = 820;
+const SWING_MS_MIN = 260;
+const SWING_MS_MAX = 860;
 
 const tickAngle = (i: number) => SWEEP_FROM - i * STEP;
 const toScreen = (aDeg: number) => 90 - aDeg; // CSS rotation for the needle
@@ -56,6 +59,26 @@ export default function Tach({
   const [rot, setRot] = useState(toScreen(tickAngle(index)));
   const [trans, setTrans] = useState("none");
   const raf = useRef(0);
+  const needleRef = useRef<SVGGElement | null>(null);
+  const rotRef = useRef(rot);
+  useEffect(() => {
+    rotRef.current = rot;
+  }, [rot]);
+
+  /** The needle's true on-screen angle right now — mid-swing or mid-creep the
+   *  CSS transition means the visual angle differs from the state target. */
+  const currentAngle = () => {
+    const g = needleRef.current;
+    if (g) {
+      const t = getComputedStyle(g).transform;
+      const m = t && t !== "none" && t.match(/matrix\(([^)]+)\)/);
+      if (m) {
+        const [a, b] = m[1].split(",").map(Number);
+        return (Math.atan2(b, a) * 180) / Math.PI;
+      }
+    }
+    return rotRef.current;
+  };
 
   useEffect(() => {
     if (reduceMotion) {
@@ -63,24 +86,32 @@ export default function Tach({
       setRot(toScreen(tickAngle(index)));
       return;
     }
-    // swing to the new graduation…
-    setTrans(`transform ${SWING_MS}ms ${SWING_EASE}`);
-    setRot(toScreen(tickAngle(index)));
+    // swing to the new graduation at constant angular speed — a one-step hop
+    // and a full-dial jump feel the same, measured from the needle's actual
+    // current angle (it may be mid-creep between graduations)
+    const target = toScreen(tickAngle(index));
+    const delta = Math.abs(target - currentAngle());
+    const swingMs = Math.round(
+      Math.min(SWING_MS_MAX, Math.max(SWING_MS_MIN, (delta / 240) * SWING_MS_PER_DIAL))
+    );
+    setTrans(`transform ${swingMs}ms ${SWING_EASE}`);
+    setRot(target);
     if (!live || index >= count - 1) return; // rest at redline on the last car
     // …then creep toward the next one for the rest of the dwell
     const t = setTimeout(() => {
       cancelAnimationFrame(raf.current);
       raf.current = requestAnimationFrame(() => {
         raf.current = requestAnimationFrame(() => {
-          setTrans(`transform ${autoplayMs - SWING_MS - 320}ms linear`);
+          setTrans(`transform ${Math.max(1000, autoplayMs - swingMs - 320)}ms linear`);
           setRot(toScreen(tickAngle(index + 1)));
         });
       });
-    }, SWING_MS + 140);
+    }, swingMs + 140);
     return () => {
       clearTimeout(t);
       cancelAnimationFrame(raf.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, live, reduceMotion, autoplayMs, count]);
 
   const minors: number[] = [];
@@ -132,8 +163,9 @@ export default function Tach({
         const [x1, y1] = pt(a, 73.5);
         const [x2, y2] = pt(a, R_ARC);
         const [nx, ny] = pt(a, 61);
-        // hit target sits on the dial number itself — the number is the control
-        const [hx, hy] = pt(a, 61);
+        // generous invisible hit zone spanning the number AND its graduation
+        // (the region the old focus box occupied) — nothing visible on press
+        const [hx, hy] = pt(a, 70);
         const active = i === index;
         return (
           <g key={i}>
@@ -158,7 +190,7 @@ export default function Tach({
             <circle
               cx={hx.toFixed(2)}
               cy={hy.toFixed(2)}
-              r="17"
+              r="22"
               fill="transparent"
               role="button"
               tabIndex={0}
@@ -177,6 +209,7 @@ export default function Tach({
       })}
       {/* needle */}
       <g
+        ref={needleRef}
         style={{
           transform: `rotate(${rot}deg)`,
           transformOrigin: `${CX}px ${CY}px`,

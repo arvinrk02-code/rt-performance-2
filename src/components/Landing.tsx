@@ -77,32 +77,49 @@ export default function Landing() {
   }, [index]);
 
   const changeStart = useRef(0);
+  const pendingTarget = useRef<number | null>(null);
+  const goToRef = useRef<(i: number) => void>(() => {});
+
+  /** Cut finished: release the lock and honour any click made mid-cut. */
+  const finishCut = useCallback(() => {
+    setBlink(false);
+    changing.current = false;
+    const p = pendingTarget.current;
+    pendingTarget.current = null;
+    if (p != null && p !== indexRef.current) goToRef.current(p);
+  }, []);
 
   /** Film cut: the scene dips through black while the next car fades up. */
-  const goTo = useCallback((i: number) => {
-    const target = ((i % SLIDES.length) + SLIDES.length) % SLIDES.length;
-    // watchdog: hidden tabs throttle timers, which can strand `changing`
-    // mid-transition — never let a stale lock block navigation forever
-    if (changing.current && Date.now() - changeStart.current < 2000) return;
-    if (target === indexRef.current) return;
-    lastAdvance.current = Date.now();
-    if (reduceRef.current) {
-      setPrevIndex(indexRef.current);
-      setIndex(target);
-      return;
-    }
-    changing.current = true;
-    changeStart.current = Date.now();
-    setBlink(true);
-    window.setTimeout(() => {
-      setPrevIndex(indexRef.current);
-      setIndex(target);
-    }, SWAP_AT_MS);
-    window.setTimeout(() => {
-      setBlink(false);
-      changing.current = false;
-    }, BLINK_MS);
-  }, []);
+  const goTo = useCallback(
+    (i: number) => {
+      const target = ((i % SLIDES.length) + SLIDES.length) % SLIDES.length;
+      if (changing.current && Date.now() - changeStart.current < 2000) {
+        // mid-cut clicks are queued, not dropped — every press counts
+        if (target !== indexRef.current) pendingTarget.current = target;
+        return;
+      }
+      if (target === indexRef.current) return;
+      lastAdvance.current = Date.now();
+      if (reduceRef.current) {
+        setPrevIndex(indexRef.current);
+        setIndex(target);
+        return;
+      }
+      changing.current = true;
+      changeStart.current = Date.now();
+      setBlink(true);
+      window.setTimeout(() => {
+        setPrevIndex(indexRef.current);
+        setIndex(target);
+      }, SWAP_AT_MS);
+      window.setTimeout(finishCut, BLINK_MS);
+    },
+    [finishCut]
+  );
+
+  useEffect(() => {
+    goToRef.current = goTo;
+  }, [goTo]);
 
   const advance = useCallback(
     (dir: number) => goTo(indexRef.current + dir),
@@ -251,10 +268,7 @@ export default function Landing() {
         <div
           className={styles.blink}
           aria-hidden="true"
-          onAnimationEnd={() => {
-            setBlink(false);
-            changing.current = false;
-          }}
+          onAnimationEnd={finishCut}
         />
       )}
 
