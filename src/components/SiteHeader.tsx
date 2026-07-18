@@ -5,15 +5,16 @@ import Link from "next/link";
 import { PAGES } from "./pages";
 import styles from "./SiteHeader.module.css";
 
-/** A few key links kept inline in the slim bar; the rest live in the overlay. */
+/** Inline links in the slim bar; the burger overlay still holds all 8 pages. */
 const NAV_LEFT = [
+  { label: "About Us", href: "/about" },
   { label: "Services", href: "/services" },
   { label: "Our Work", href: "/our-work" },
   { label: "Gallery", href: "/gallery" },
 ];
 
 const NAV_RIGHT = [
-  { label: "About Us", href: "/about" },
+  { label: "Community", href: "/community" },
   { label: "Find Us", href: "/find-us" },
 ];
 
