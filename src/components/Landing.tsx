@@ -201,6 +201,11 @@ export default function Landing() {
         </div>
       ))}
 
+      {/* announce car changes to screen readers */}
+      <div aria-live="polite" className={styles.srOnly}>
+        {slide.title}
+      </div>
+
       {/* headline block — keyed so it re-animates each slide change */}
       <div className={styles.copy} key={slide.title}>
         <h1 className={styles.title}>{slide.title}</h1>

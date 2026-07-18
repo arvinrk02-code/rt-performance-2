@@ -165,7 +165,10 @@ export default function Tach({
               style={{ cursor: "pointer" }}
               onClick={() => onSelect(i)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") onSelect(i);
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onSelect(i);
+                }
               }}
             />
           </g>
