@@ -2,10 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { SLIDES } from "./slides";
+import Tach from "./Tach";
 import styles from "./Landing.module.css";
 
-const AUTOPLAY_MS = 6000;
+const AUTOPLAY_MS = 7000;
 const LOADER_MS = 1900;
+const BLINK_MS = 760;
+const SWAP_AT_MS = 300; // slide swaps at the bottom of the exposure dip
 
 /** Hairline fan echoing the loader's fine diagonals, anchored bottom-left. */
 function FanLines() {
@@ -59,61 +62,124 @@ const NAV_RIGHT = [
 export default function Landing() {
   const [loading, setLoading] = useState(true);
   const [index, setIndex] = useState(0);
-  const reduceMotion = useRef(false);
+  const [prevIndex, setPrevIndex] = useState<number | null>(null);
+  const [blink, setBlink] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
+
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const lastAdvance = useRef(0);
+  const changing = useRef(false);
+  const wheelAccum = useRef(0);
+  const dragX = useRef<number | null>(null);
+  const indexRef = useRef(0);
+  const reduceRef = useRef(false);
+
+  useEffect(() => {
+    indexRef.current = index;
+  }, [index]);
+
+  const changeStart = useRef(0);
+
+  /** Film cut: the scene dips through black while the next car fades up. */
+  const goTo = useCallback((i: number) => {
+    const target = ((i % SLIDES.length) + SLIDES.length) % SLIDES.length;
+    // watchdog: hidden tabs throttle timers, which can strand `changing`
+    // mid-transition — never let a stale lock block navigation forever
+    if (changing.current && Date.now() - changeStart.current < 2000) return;
+    if (target === indexRef.current) return;
+    lastAdvance.current = Date.now();
+    if (reduceRef.current) {
+      setPrevIndex(indexRef.current);
+      setIndex(target);
+      return;
+    }
+    changing.current = true;
+    changeStart.current = Date.now();
+    setBlink(true);
+    window.setTimeout(() => {
+      setPrevIndex(indexRef.current);
+      setIndex(target);
+    }, SWAP_AT_MS);
+    window.setTimeout(() => {
+      setBlink(false);
+      changing.current = false;
+    }, BLINK_MS);
+  }, []);
+
+  const advance = useCallback(
+    (dir: number) => goTo(indexRef.current + dir),
+    [goTo]
+  );
 
   const restartAutoplay = useCallback(() => {
     if (timer.current) clearInterval(timer.current);
-    if (reduceMotion.current) return;
+    if (reduceRef.current) return;
     lastAdvance.current = Date.now();
     timer.current = setInterval(() => {
       // browsers replay throttled background-tab intervals in a burst on
       // return — gate on wall time so a burst advances at most one slide
       const now = Date.now();
       if (now - lastAdvance.current < AUTOPLAY_MS - 200) return;
-      lastAdvance.current = now;
-      setIndex((i) => (i + 1) % SLIDES.length);
+      advance(1);
     }, AUTOPLAY_MS);
-  }, []);
-
-  const goTo = useCallback(
-    (i: number) => {
-      setIndex(((i % SLIDES.length) + SLIDES.length) % SLIDES.length);
-      restartAutoplay();
-    },
-    [restartAutoplay]
-  );
+  }, [advance]);
 
   useEffect(() => {
-    reduceMotion.current = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    reduceRef.current = reduce;
+    setReduceMotion(reduce);
     const t = setTimeout(
       () => {
         setLoading(false);
         restartAutoplay();
       },
-      reduceMotion.current ? 250 : LOADER_MS
+      reduce ? 250 : LOADER_MS
     );
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") advance(1);
+      if (e.key === "ArrowLeft") advance(-1);
+    };
+    const onWheel = (e: WheelEvent) => {
+      if (changing.current) return;
+      wheelAccum.current +=
+        Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      if (wheelAccum.current > 140) {
+        wheelAccum.current = 0;
+        advance(1);
+      } else if (wheelAccum.current < -140) {
+        wheelAccum.current = 0;
+        advance(-1);
+      }
+    };
+    const onDown = (e: PointerEvent) => {
+      if ((e.target as HTMLElement).closest('a, button, [role="button"]'))
+        return;
+      dragX.current = e.clientX;
+    };
+    const onUp = (e: PointerEvent) => {
+      if (dragX.current == null) return;
+      const dx = e.clientX - dragX.current;
+      dragX.current = null;
+      if (Math.abs(dx) > 60) advance(dx < 0 ? 1 : -1);
+    };
+
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("wheel", onWheel, { passive: true });
+    window.addEventListener("pointerdown", onDown);
+    window.addEventListener("pointerup", onUp);
     return () => {
       clearTimeout(t);
       if (timer.current) clearInterval(timer.current);
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("pointerup", onUp);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight") goTo(index + 1);
-      if (e.key === "ArrowLeft") goTo(index - 1);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [index, goTo]);
-
   const slide = SLIDES[index];
-  const next = SLIDES[(index + 1) % SLIDES.length];
 
   return (
     <div className={styles.stage}>
@@ -174,30 +240,46 @@ export default function Landing() {
         </nav>
       </header>
 
-      {/* dash pagination */}
-      <div className={styles.dashes} role="tablist" aria-label="Slides">
-        {SLIDES.map((s, i) => (
-          <button
-            key={s.img}
-            role="tab"
-            aria-selected={i === index}
-            aria-label={s.title}
-            className={`${styles.dash} ${i === index ? styles.dashActive : ""}`}
-            onClick={() => goTo(i)}
-          />
-        ))}
+      {/* the instrument — rev-counter as odometer, selector and progress */}
+      <div className={styles.tach}>
+        <Tach
+          count={SLIDES.length}
+          index={index}
+          autoplayMs={AUTOPLAY_MS}
+          live={!loading}
+          reduceMotion={reduceMotion}
+          onSelect={(i) => {
+            goTo(i);
+            restartAutoplay();
+          }}
+        />
+        <div className={styles.numWrap} aria-hidden="true">
+          {prevIndex !== null && (
+            <span key={`out-${prevIndex}`} className={styles.numOut}>
+              {String(prevIndex + 1).padStart(2, "0")}
+            </span>
+          )}
+          <span key={`in-${index}`} className={styles.numIn}>
+            {String(index + 1).padStart(2, "0")}
+          </span>
+        </div>
+        <div className={styles.tachName} key={slide.short}>
+          {slide.short}
+        </div>
       </div>
 
-      {/* next-slide preview */}
-      <button
-        className={styles.preview}
-        onClick={() => goTo(index + 1)}
-        aria-label={`Next: ${next.title}`}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={next.img} alt="" draggable={false} />
-        <span className={styles.previewLabel}>{next.title}</span>
-      </button>
+      {/* film-cut dip — animationend is the authoritative cleanup; the
+          timeout in goTo is only a fallback for throttled tabs */}
+      {blink && (
+        <div
+          className={styles.blink}
+          aria-hidden="true"
+          onAnimationEnd={() => {
+            setBlink(false);
+            changing.current = false;
+          }}
+        />
+      )}
 
       {/* loader */}
       <div
