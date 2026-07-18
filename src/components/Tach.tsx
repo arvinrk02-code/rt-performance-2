@@ -58,6 +58,26 @@ export default function Tach({
   const [rot, setRot] = useState(toScreen(tickAngle(index)));
   const [trans, setTrans] = useState("none");
   const raf = useRef(0);
+  const rafCreep = useRef(0);
+  const needleRef = useRef<SVGGElement | null>(null);
+  const rotRef = useRef(rot);
+  useEffect(() => {
+    rotRef.current = rot;
+  }, [rot]);
+
+  /** The needle's true on-screen angle — mid-creep it differs from state. */
+  const currentAngle = () => {
+    const g = needleRef.current;
+    if (g) {
+      const t = getComputedStyle(g).transform;
+      const m = t && t !== "none" && t.match(/matrix\(([^)]+)\)/);
+      if (m) {
+        const [a, b] = m[1].split(",").map(Number);
+        return (Math.atan2(b, a) * 180) / Math.PI;
+      }
+    }
+    return rotRef.current;
+  };
 
   useEffect(() => {
     if (reduceMotion) {
@@ -65,25 +85,38 @@ export default function Tach({
       setRot(toScreen(tickAngle(index)));
       return;
     }
-    // the needle JUMPS: one fast damped flick straight to the target,
-    // same duration near or far — never a clock-like sweep
-    setTrans(`transform ${SWING_MS}ms ${SWING_EASE}`);
-    setRot(toScreen(tickAngle(index)));
+    const target = toScreen(tickAngle(index));
+    // Freeze at the true current angle first: if the needle was already
+    // creeping toward this very graduation, the CSS target wouldn't change
+    // and no transition would restart — the whip would be silently lost.
+    // Freezing then springing guarantees the 620ms flick every time.
+    setTrans("none");
+    setRot(currentAngle());
+    cancelAnimationFrame(raf.current);
+    cancelAnimationFrame(rafCreep.current);
+    raf.current = requestAnimationFrame(() => {
+      raf.current = requestAnimationFrame(() => {
+        setTrans(`transform ${SWING_MS}ms ${SWING_EASE}`);
+        setRot(target);
+      });
+    });
     if (!live || index >= count - 1) return; // rest at redline on the last car
     // …then creep toward the next one for the rest of the dwell
+    // (own rAF handle — must never cancel a whip that hasn't fired yet)
     const t = setTimeout(() => {
-      cancelAnimationFrame(raf.current);
-      raf.current = requestAnimationFrame(() => {
-        raf.current = requestAnimationFrame(() => {
+      rafCreep.current = requestAnimationFrame(() => {
+        rafCreep.current = requestAnimationFrame(() => {
           setTrans(`transform ${autoplayMs - SWING_MS - 320}ms linear`);
           setRot(toScreen(tickAngle(index + 1)));
         });
       });
-    }, SWING_MS + 140);
+    }, SWING_MS + 180);
     return () => {
       clearTimeout(t);
       cancelAnimationFrame(raf.current);
+      cancelAnimationFrame(rafCreep.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, live, reduceMotion, autoplayMs, count]);
 
   const minors: number[] = [];
@@ -181,6 +214,7 @@ export default function Tach({
       })}
       {/* needle */}
       <g
+        ref={needleRef}
         style={{
           transform: `rotate(${rot}deg)`,
           transformOrigin: `${CX}px ${CY}px`,
