@@ -5,7 +5,7 @@ import AboutPart1 from "@/components/home/AboutPart1";
 import AboutPart2 from "@/components/home/AboutPart2";
 import Reviews from "@/components/home/Reviews";
 import FindUs from "@/components/home/FindUs";
-import ContactSection from "@/components/home/ContactSection";
+import Contact from "@/components/Contact";
 import HomeMotion from "@/components/home/HomeMotion";
 import WaFab from "@/components/home/WaFab";
 
@@ -108,7 +108,7 @@ export default function Home() {
         <AboutPart2 />
         <Reviews />
         <FindUs />
-        <ContactSection />
+        <Contact />
       </main>
       <SiteFooter />
       <HomeMotion />

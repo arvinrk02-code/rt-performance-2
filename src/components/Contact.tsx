@@ -83,7 +83,7 @@ export default function Contact() {
   }
 
   return (
-    <section className={styles.stage}>
+    <section id="contact" data-chapter="Contact" className={styles.stage}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         className={styles.photo}

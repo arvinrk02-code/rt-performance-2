@@ -1,12 +1,7 @@
-import type { Metadata } from "next";
-import Contact from "@/components/Contact";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Contact Us | RT Performance",
-  description:
-    "Get in touch with RT Performance. Call, WhatsApp or email, or send an enquiry. Unit 10 Fourth Way, Wembley, London.",
-};
-
-export default function ContactPage() {
-  return <Contact />;
+/** One-pager: the contact experience lives as the #contact section of the
+ *  home page. This route just sends visitors there. */
+export default function Page() {
+  redirect("/#contact");
 }
