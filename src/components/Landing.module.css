@@ -34,12 +34,9 @@
   object-fit: contain;
 }
 
+/* every active slide — cover and contain alike — gets the subtle zoom-out */
 .slideActive .slideImg {
   animation: kenburns 8s ease-out forwards;
-}
-
-.slideActive .slideContain {
-  animation: none;
 }
 
 @keyframes kenburns {
