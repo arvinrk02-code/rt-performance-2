@@ -501,13 +501,49 @@
   transition: transform 0.55s cubic-bezier(0.3, 1.4, 0.55, 1);
 }
 
-.threadTick {
+/* every photo is a clickable step: the whole 44px-tall cell is the hit
+   target, so tapping anywhere along the thread seeks the nearest photo.
+   Cells tile the rail (width = one photo's share, capped) but stay
+   invisible — only the tick and stage label show. */
+.threadStep {
   position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(var(--stepw, 40px), 48px);
+  min-width: 16px;
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.threadStepTick {
+  position: absolute;
+  left: 50%;
   top: 50%;
   width: 1px;
   height: 7px;
   transform: translate(-50%, -50%);
   background: rgba(255, 255, 255, 0.28);
+  transition:
+    background-color 0.3s ease,
+    height 0.3s ease;
+}
+
+.threadStep:hover .threadStepTick {
+  background: rgba(245, 245, 245, 0.7);
+}
+
+/* tagged stages read taller */
+.threadStepStaged .threadStepTick {
+  width: 1.5px;
+  height: 11px;
+  background: rgba(245, 245, 245, 0.55);
+}
+
+.threadStepStaged.threadStepPassed .threadStepTick {
+  background: var(--ember);
 }
 
 /* full-width carrier translated by --p × its own width, so the diamond
@@ -532,35 +568,7 @@
   box-shadow: 0 0 10px rgba(225, 67, 18, 0.5);
 }
 
-/* a tagged stage: taller tick + label, one click to jump there */
-.threadNode {
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 30px;
-  height: 44px;
-  padding: 0;
-  background: none;
-  border: 0;
-  cursor: pointer;
-}
-
-.threadNodeTick {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 1.5px;
-  height: 11px;
-  transform: translate(-50%, -50%);
-  background: rgba(245, 245, 245, 0.55);
-  transition: background-color 0.3s ease;
-}
-
-.threadNodePassed .threadNodeTick {
-  background: var(--ember);
-}
-
-.threadLabel {
+.threadStepLabel {
   position: absolute;
   left: 50%;
   top: calc(50% + 9px);
@@ -575,33 +583,33 @@
   transition: color 0.3s ease;
 }
 
-.threadNodePassed .threadLabel {
+.threadStepStaged.threadStepPassed .threadStepLabel {
   color: rgba(245, 245, 245, 0.85);
 }
 
-.threadNodeCurrent .threadLabel {
+.threadStepCurrent .threadStepLabel {
   color: var(--ember);
 }
 
 /* crowded neighbours flip their label above the line */
-.threadNodeFlip .threadLabel {
+.threadStepFlip .threadStepLabel {
   top: auto;
   bottom: calc(50% + 9px);
 }
 
-/* nodes at the thread's ends keep their labels inside the rail */
-.threadNodeStart .threadLabel {
+/* steps at the thread's ends keep their labels inside the rail */
+.threadStepStart .threadStepLabel {
   left: 0;
   transform: none;
 }
 
-.threadNodeEnd .threadLabel {
+.threadStepEnd .threadStepLabel {
   left: auto;
   right: 0;
   transform: none;
 }
 
-.threadNode:focus-visible {
+.threadStep:focus-visible {
   outline: 2px solid var(--ember);
   outline-offset: 2px;
   border-radius: 2px;
@@ -796,7 +804,7 @@
     gap: 12px;
   }
 
-  .threadLabel {
+  .threadStepLabel {
     font-size: 8px;
   }
 

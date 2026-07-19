@@ -490,6 +490,20 @@ function ProgressThread({
   let current = "";
   for (const nd of nodes) if (nd.i <= index) current = nd.stage;
 
+  // stage labels that would crowd their predecessor flip above the line
+  const flipped = new Set<number>();
+  let prevStagePct = -Infinity;
+  photos.forEach((ph, i) => {
+    if (!ph.stage) return;
+    const at = pct(i);
+    if (at - prevStagePct < 14) flipped.add(i);
+    prevStagePct = at;
+  });
+
+  // width of one step's hit cell, so the cells tile the whole rail and any
+  // point on the thread seeks its nearest photo (capped in CSS)
+  const stepW = n > 1 ? `${100 / (n - 1)}%` : "100%";
+
   return (
     <div className={styles.thread}>
       <div className={styles.threadRail}>
@@ -499,37 +513,39 @@ function ProgressThread({
           aria-hidden="true"
           style={{ ["--p" as string]: p }}
         />
-        {photos.map((_, i) => (
-          <span
-            key={i}
-            className={styles.threadTick}
-            aria-hidden="true"
-            style={{ left: `${pct(i)}%` }}
-          />
-        ))}
-        {nodes.map((nd, k) => {
-          const at = pct(nd.i);
-          // flip a label above the line when it would crowd its neighbour
-          const flip = k > 0 && at - pct(nodes[k - 1].i) < 14;
+        {/* one clickable step per photo — a plain tick, or a taller labelled
+            node at the tagged stages — every one seeks straight to its photo */}
+        {photos.map((ph, i) => {
+          const at = pct(i);
+          const staged = Boolean(ph.stage);
+          const cls = [
+            styles.threadStep,
+            staged ? styles.threadStepStaged : "",
+            i <= index ? styles.threadStepPassed : "",
+            staged && current === ph.stage ? styles.threadStepCurrent : "",
+            flipped.has(i) ? styles.threadStepFlip : "",
+            at < 3 ? styles.threadStepStart : at > 97 ? styles.threadStepEnd : "",
+          ]
+            .filter(Boolean)
+            .join(" ");
           return (
             <button
-              key={nd.i}
+              key={i}
               type="button"
-              className={`${styles.threadNode} ${
-                nd.i <= index ? styles.threadNodePassed : ""
-              } ${
-                current === nd.stage ? styles.threadNodeCurrent : ""
-              } ${flip ? styles.threadNodeFlip : ""} ${
-                at < 3 ? styles.threadNodeStart : at > 97 ? styles.threadNodeEnd : ""
+              className={cls}
+              style={{ left: `${at}%`, ["--stepw" as string]: stepW }}
+              aria-current={i === index ? "true" : undefined}
+              aria-label={`Go to photo ${i + 1} of ${n}${
+                ph.stage ? `, ${ph.stage} stage` : ""
               }`}
-              style={{ left: `${at}%` }}
-              aria-label={`Go to ${nd.stage} stage, photo ${nd.i + 1} of ${n}`}
-              onClick={() => onSeek(nd.i)}
+              onClick={() => onSeek(i)}
             >
-              <span className={styles.threadNodeTick} aria-hidden="true" />
-              <span className={styles.threadLabel} aria-hidden="true">
-                {nd.stage}
-              </span>
+              <span className={styles.threadStepTick} aria-hidden="true" />
+              {staged && (
+                <span className={styles.threadStepLabel} aria-hidden="true">
+                  {ph.stage}
+                </span>
+              )}
             </button>
           );
         })}
