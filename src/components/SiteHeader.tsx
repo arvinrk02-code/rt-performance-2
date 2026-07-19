@@ -22,11 +22,20 @@ const NAV_RIGHT = [
 type Variant = "hero" | "solid";
 
 /** hero = fixed overlay for the home one-pager, inverts with the section
- *  beneath it; solid = sticky dark bar for standalone pages. */
-export default function SiteHeader({ variant = "solid" }: { variant?: Variant }) {
+ *  beneath it; solid = sticky dark bar for standalone pages.
+ *  bare = chromeless hero (no scrolled field/rule) — for pages that mount
+ *  their own Porsche-style progressive-blur stack beneath the bar. */
+export default function SiteHeader({
+  variant = "solid",
+  bare = false,
+}: {
+  variant?: Variant;
+  bare?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [onLight, setOnLight] = useState(false);
+  const [onEmber, setOnEmber] = useState(false);
   const raf = useRef(0);
 
   // lock the page scroll behind the full-screen menu, and close on Escape
@@ -52,14 +61,15 @@ export default function SiteHeader({ variant = "solid" }: { variant?: Variant })
       setScrolled(window.scrollY > 40);
       const probeY = 46; // the bar's midline
       const sections = document.querySelectorAll<HTMLElement>("[data-theme]");
-      let light = false;
+      let theme = "dark";
       sections.forEach((sec) => {
         const r = sec.getBoundingClientRect();
         if (r.top <= probeY && r.bottom >= probeY) {
-          light = sec.dataset.theme === "light";
+          theme = sec.dataset.theme || "dark";
         }
       });
-      setOnLight(light);
+      setOnLight(theme === "light");
+      setOnEmber(theme === "ember");
     };
     probe();
     window.addEventListener("scroll", probe, { passive: true });
@@ -74,6 +84,8 @@ export default function SiteHeader({ variant = "solid" }: { variant?: Variant })
     variant === "solid" ? styles.solid : styles.hero,
     variant === "hero" && scrolled ? styles.scrolled : "",
     variant === "hero" && onLight ? styles.onLight : "",
+    variant === "hero" && onEmber ? styles.onEmber : "",
+    bare ? styles.bare : "",
   ]
     .filter(Boolean)
     .join(" ");

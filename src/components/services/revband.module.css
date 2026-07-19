@@ -1,0 +1,392 @@
+/* ========================= the linear rev-band =========================
+   The hero tach unrolled. Hairline spine + graduations + a thin ember needle.
+   Pure line; the only chromatic accent is --ember. Vertical by default;
+   the docked rail flips horizontal along the top under 900px.            */
+
+.band {
+  --line: rgba(255, 255, 255, 0.22); /* spine / majors, on black */
+  --line-soft: rgba(255, 255, 255, 0.14); /* minors */
+  --num: rgba(245, 245, 245, 0.45);
+  --name: rgba(245, 245, 245, 0.6);
+  display: block;
+  height: 100%;
+}
+
+/* ------------------------------------------------------------- readout */
+
+.readout {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 26px 2px;
+}
+
+.readNum {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.readTot {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: rgba(245, 245, 245, 0.4);
+}
+
+/* -------------------------------------------------------------- scale */
+
+.scale {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+/* the gauge spine — one hairline */
+.spine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--spine-x, 14px);
+  width: 1px;
+  background: var(--line);
+}
+
+/* ember progress, lead-in → needle. --needle-pos is an INHERITED custom
+   property written per-frame by the page's inertial follower (direct DOM,
+   no React, no transition) — the inline --to is only the SSR fallback. */
+.fill {
+  position: absolute;
+  left: var(--spine-x, 14px);
+  top: var(--from);
+  height: max(0px, calc(var(--needle-pos, var(--to)) - var(--from)));
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(225, 67, 18, 0),
+    rgba(225, 67, 18, 0.65)
+  );
+}
+
+/* redline nub past the last graduation */
+.redline {
+  position: absolute;
+  top: var(--at);
+  left: var(--spine-x, 14px);
+  width: 9px;
+  height: 2px;
+  transform: translateY(6px);
+  background: rgba(225, 67, 18, 0.55);
+}
+
+/* minor graduations */
+.minor {
+  position: absolute;
+  top: var(--pos);
+  left: var(--spine-x, 14px);
+  width: 5px;
+  height: 1px;
+  background: var(--line-soft);
+}
+
+/* ---------------------------------------------------------- major stops */
+
+.stop {
+  position: absolute;
+  top: var(--pos);
+  left: 0;
+  right: 0;
+  height: 34px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stop:focus-visible .tick {
+  background: var(--ink);
+  width: 16px;
+}
+
+/* major graduation line */
+.tick {
+  position: absolute;
+  left: var(--spine-x, 14px);
+  top: 50%;
+  width: 11px;
+  height: 1px;
+  transform: translateY(-50%);
+  background: var(--line);
+  transition: width 240ms ease, background 240ms ease;
+}
+
+.stop:hover .tick {
+  width: 16px;
+}
+
+.stopActive .tick {
+  width: 18px;
+  height: 1.4px;
+  background: var(--ink);
+}
+
+/* mono numeral, left of the spine */
+.num {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: var(--num);
+  transition: color 240ms ease;
+}
+
+.stopActive .num {
+  color: var(--ember);
+}
+
+/* service name, right of the spine */
+.name {
+  margin-left: calc(var(--spine-x, 14px) + 30px);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--name);
+  white-space: nowrap;
+  transition: color 240ms ease;
+}
+
+.stop:hover .name,
+.stop:focus-visible .name {
+  color: var(--ink);
+}
+
+.stopActive .name {
+  color: var(--ember);
+}
+
+/* ---------------------------------------------------------------- needle */
+
+.needle {
+  position: absolute;
+  top: var(--needle-pos, var(--pos));
+  left: var(--spine-x, 14px);
+  width: 22px;
+  height: 1.5px;
+  transform: translate(-6px, -50%);
+  background: rgba(245, 245, 245, 0.95);
+  /* no transition — position comes from the per-frame inertial follower;
+     any transition here would fight that signal and read as jerks */
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
+}
+
+.needleTip {
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  transform: translate(0, -50%) rotate(45deg);
+  background: var(--ember);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .needle,
+  .fill {
+    transition: none;
+  }
+}
+
+/* ============================== intro state ============================== */
+
+.intro {
+  --spine-x: 16px;
+  width: 300px;
+  height: clamp(340px, 52vh, 500px);
+}
+
+/* ============================== docked state ============================= */
+
+.docked {
+  --spine-x: 12px;
+  width: 30px;
+  height: 100%;
+}
+
+.docked .name {
+  /* names collapse to a hover flyout chip when docked */
+  position: absolute;
+  left: calc(var(--spine-x) + 24px);
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+  padding: 7px 12px;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--carbon);
+  background: var(--paper);
+  border: 1px solid var(--hairline-dark);
+  border-radius: 3px;
+  box-shadow: 0 10px 26px rgba(11, 12, 14, 0.16);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+
+.docked .stop:hover .name,
+.docked .stop:focus-visible .name {
+  opacity: 1;
+  color: var(--carbon);
+}
+
+.docked .stopActive .name {
+  color: var(--ember);
+}
+
+/* On the white chapters the rail inverts to dark ink on paper. */
+.docked {
+  --line: rgba(11, 12, 14, 0.28);
+  --line-soft: rgba(11, 12, 14, 0.16);
+  --num: rgba(11, 12, 14, 0.5);
+}
+
+.docked .tick,
+.docked .spine,
+.docked .minor {
+  background: currentColor;
+  color: transparent;
+}
+
+.docked .spine {
+  background: var(--line);
+}
+
+.docked .minor {
+  background: var(--line-soft);
+}
+
+.docked .tick {
+  background: var(--line);
+}
+
+.docked .stopActive .tick {
+  background: var(--carbon);
+}
+
+.docked .needle {
+  background: var(--carbon);
+}
+
+/* ======================= docked, horizontal (<900px) ===================== */
+
+@media (max-width: 899px) {
+  .docked {
+    --spine-x: 0px;
+    width: 100%;
+    height: 30px;
+  }
+
+  .docked .scale {
+    height: 100%;
+  }
+
+  .docked .spine {
+    top: 14px;
+    bottom: auto;
+    left: 4%;
+    right: 4%;
+    width: auto;
+    height: 1px;
+  }
+
+  .docked .fill {
+    top: 14px;
+    left: var(--from);
+    width: max(0px, calc(var(--to) - var(--from)));
+    height: 1px;
+    transition: width 620ms cubic-bezier(0.3, 1.4, 0.55, 1),
+      left 620ms cubic-bezier(0.3, 1.4, 0.55, 1);
+  }
+
+  .docked .redline {
+    top: 14px;
+    left: var(--at);
+    width: 2px;
+    height: 9px;
+    transform: translateX(6px);
+  }
+
+  .docked .minor {
+    top: 14px;
+    left: var(--pos);
+    width: 1px;
+    height: 5px;
+  }
+
+  .docked .stop {
+    top: 0;
+    bottom: 0;
+    left: var(--pos);
+    right: auto;
+    width: 34px;
+    height: auto;
+    transform: translateX(-50%);
+    justify-content: center;
+  }
+
+  .docked .tick {
+    left: 50%;
+    top: 14px;
+    width: 1px;
+    height: 11px;
+    transform: translateX(-50%);
+  }
+
+  .docked .stopActive .tick {
+    width: 1.4px;
+    height: 18px;
+  }
+
+  .docked .num {
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%);
+  }
+
+  .docked .needle {
+    top: 14px;
+    left: var(--pos);
+    width: 1.5px;
+    height: 22px;
+    transform: translate(-50%, -6px);
+    transition: left 620ms cubic-bezier(0.3, 1.4, 0.55, 1);
+  }
+
+  .docked .needleTip {
+    right: auto;
+    left: 50%;
+    bottom: -1px;
+    top: auto;
+    transform: translate(-50%, 0) rotate(45deg);
+  }
+
+  .docked .name {
+    left: 50%;
+    top: calc(100% + 8px);
+    transform: translateX(-50%);
+  }
+}

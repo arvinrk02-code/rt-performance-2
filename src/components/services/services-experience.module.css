@@ -1,0 +1,365 @@
+/* ============================ /services page ============================
+   One black stage. The rev-band rail is a FIXED left column, present the whole
+   way down; the intro's structure (rail | wide right space) repeats for every
+   service — that right space carries each service's title, copy and photos.
+   Ember is the single accent; the active service name lights ember.       */
+
+.wrap {
+  position: relative;
+  background: var(--void);
+}
+
+/* the Porsche progressive-blur stack under the (chromeless) nav */
+.topMelt {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 96px;
+  z-index: 12;
+  pointer-events: none;
+}
+
+.topMelt span {
+  position: absolute;
+  inset: 0;
+}
+
+/* -------------------------------------------------------- the fixed rail */
+/* full-height flex box with the intro's own vertical padding, so the rail
+   centres exactly where the intro copy does — and stays there all page. */
+.rail {
+  position: fixed;
+  left: 7%;
+  top: 0;
+  bottom: 0;
+  width: 340px;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  padding: calc(92px + clamp(24px, 4vh, 48px)) 0 clamp(40px, 7vh, 80px);
+  pointer-events: none;
+}
+
+.rail > * {
+  pointer-events: auto;
+}
+
+/* reserves the rail's column inside each section so the right content lines
+   up with the intro copy; the fixed rail floats over it */
+.railSpacer {
+  width: 340px;
+}
+
+/* ------------------------------------------- shared intro / service grid */
+
+.intro,
+.chapter,
+.cta {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  align-items: center;
+  gap: clamp(40px, 6vw, 110px);
+  min-height: 100dvh;
+  padding: calc(92px + clamp(24px, 4vh, 48px)) 7% clamp(40px, 7vh, 80px);
+}
+
+/* ------------------------------------------------------- intro (unchanged) */
+
+.introCopy {
+  max-width: 620px;
+}
+
+.eyebrow {
+  margin: 0 0 22px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(44px, 7vw, 104px);
+  line-height: 1.02;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.lede {
+  margin: 28px 0 0;
+  max-width: 50ch;
+  font-family: var(--font-sans);
+  font-size: clamp(14px, 1.15vw, 17px);
+  line-height: 1.65;
+  color: rgba(245, 245, 245, 0.72);
+}
+
+.hint {
+  margin: 44px 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(245, 245, 245, 0.38);
+}
+
+/* ------------------------------------------------- service right content */
+
+.chRight {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(26px, 4vh, 48px);
+  min-width: 0;
+  max-width: 1080px;
+}
+
+.chTitle {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(38px, 5vw, 76px);
+  line-height: 1.02;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.chLede {
+  margin: clamp(18px, 2.4vh, 26px) 0 0;
+  max-width: 46ch;
+  font-family: var(--font-sans);
+  font-size: clamp(15px, 1.25vw, 18px);
+  line-height: 1.72;
+  color: rgba(245, 245, 245, 0.74);
+}
+
+/* the honest facts — one quiet inline mono line */
+.chFacts {
+  margin: clamp(16px, 2.2vh, 24px) 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  line-height: 2.1;
+  color: rgba(245, 245, 245, 0.5);
+}
+
+.factDot {
+  color: var(--ember);
+}
+
+/* ------------------------------------------- the Porsche photo frame */
+/* Flat — no border, no shadow, no box. The oversized image drifts inside
+   the overflow-hidden frame with scroll; entrance is a slow pure fade;
+   the carousel dissolves between photos inside the same frame. */
+
+/* the measured Porsche entrance: the item slides in from its side while
+   fading (their GSAP tween: translate(-35px → 0) + opacity). SLOW and
+   elegant — a gentle quad-out keeps the motion visible through the whole
+   reveal (an expo curve dumps its travel in the first 300ms = jutter). */
+.phItem {
+  margin: 0;
+  min-width: 0;
+  width: 100%;
+  max-width: min(100%, 64vh);
+  opacity: 0;
+  transform: translateX(80px);
+  transition: opacity 2000ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 80ms,
+    transform 2000ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 80ms;
+}
+
+/* entrance directions cycle per service — the reference uses all four */
+.phDirUp {
+  transform: translateY(80px); /* rises from below */
+}
+
+.phDirLeft {
+  transform: translateX(-80px);
+}
+
+.phDirDown {
+  transform: translateY(-80px); /* drops from above */
+}
+
+.phItem.revealIn {
+  opacity: 1;
+  transform: none;
+}
+
+.phFrame {
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* the parallax scroller — oversized, translateY set by the probe
+   (130% tall for the reference's ±14% drift range) */
+.phScroller {
+  position: absolute;
+  left: 0;
+  top: -15%;
+  width: 100%;
+  height: 130%;
+  will-change: transform;
+}
+
+/* the photo's OWN entrance (the reference's MoveScaleUp): while the frame
+   slides in, the image inside settles from an oversized scale to rest —
+   two layered motions. Scale lives on the img (the scroller's transform
+   belongs to the per-frame parallax writer; they must not fight). */
+.phImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.28);
+  transition: opacity 1200ms ease,
+    transform 3000ms cubic-bezier(0.25, 0.46, 0.45, 0.94) 80ms;
+}
+
+.phItem.revealIn .phImg {
+  transform: scale(1);
+}
+
+.phImgOn {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phItem,
+  .phImg {
+    transition: none;
+    transform: none;
+  }
+}
+
+.phBar {
+  margin: 16px 2px 0;
+}
+
+/* the Porsche caption — bold, uppercase, full stop */
+.phCap {
+  font-family: var(--font-sans);
+  font-size: clamp(14px, 1.15vw, 17px);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* ------------------------------------------------------------- hand-off */
+
+.ctaInner {
+  max-width: 720px;
+}
+
+.ctaEyebrow {
+  margin: 0 0 18px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+
+.ctaTitle {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(34px, 4.6vw, 66px);
+  line-height: 1.05;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.ctaLink {
+  display: inline-block;
+  margin-top: 34px;
+  padding: 15px 30px;
+  border: 1px solid rgba(245, 245, 245, 0.4);
+  border-radius: 2px;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+  transition: background 220ms ease, color 220ms ease, border-color 220ms ease;
+}
+
+.ctaLink:hover,
+.ctaLink:focus-visible {
+  background: var(--ember);
+  border-color: var(--ember);
+  color: #fff;
+}
+
+/* ------------------------------------------------------- floating reveals */
+
+.chText,
+.chDeck,
+.ctaInner {
+  opacity: 0;
+  transform: translateY(38px);
+  transition: opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.chDeck {
+  transition-delay: 110ms;
+}
+
+.revealIn {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chText,
+  .chDeck,
+  .ctaInner {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* =============================== responsive ============================== */
+
+@media (max-width: 1024px) {
+  /* the tall rail can't fold into a phone; content reclaims the full width */
+  .rail {
+    display: none;
+  }
+
+  .intro,
+  .chapter,
+  .cta {
+    grid-template-columns: 1fr;
+    gap: 34px;
+  }
+
+  .railSpacer {
+    display: none;
+  }
+
+  .phItem {
+    max-width: none;
+  }
+}

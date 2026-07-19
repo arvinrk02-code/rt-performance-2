@@ -30,6 +30,59 @@
   border-bottom-color: var(--hairline-dark);
 }
 
+/* ember: over the orange Reviews section — the bar tracks to orange with
+   white nav + white logo (the section bg is the ember gradient) */
+.onEmber.scrolled {
+  background: rgba(225, 67, 18, 0.55);
+  border-bottom-color: rgba(255, 255, 255, 0.24);
+}
+
+.onEmber .navLeft a,
+.onEmber .navRight a,
+.onEmber .navPhone,
+.onEmber .navLeft a:hover,
+.onEmber .navRight a:hover {
+  color: #fff;
+}
+
+.onEmber .burger span {
+  background: #fff;
+}
+
+.onEmber .navContact {
+  border-left-color: rgba(255, 255, 255, 0.3);
+}
+
+/* the red RT logo would clash on orange — render it white */
+.onEmber .brand img {
+  filter: brightness(0) invert(1);
+}
+
+.onEmber .dropdown {
+  background: var(--ember);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.onEmber .dropLink {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.onEmber .dropLink:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* bare: the Porsche treatment — a progressive-blur stack behind the bar does
+   all the work; the bar itself stays chromeless (no field, no tint, no rule) */
+.bare,
+.bare.scrolled,
+.bare.onLight.scrolled {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom-color: transparent;
+}
+
 .onLight .navLeft a,
 .onLight .navRight a,
 .onLight .navPhone {

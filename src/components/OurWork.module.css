@@ -267,8 +267,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: clamp(56px, 8vh, 92px) clamp(36px, 5vw, 84px)
-    clamp(20px, 4vh, 44px) clamp(190px, 20vw, 280px);
+  /* Centre the content (title · filmstrip · thread) on the FULL viewport, not
+     the space beside the rail — the block sits dead-centre of the page and
+     shifts left. Symmetric padding = the rail's right edge (left:clamp(18,3vw,
+     44) + ~190px wide) on BOTH sides → content centres on the viewport and its
+     left edge just clears the rail. */
+  padding: clamp(56px, 8vh, 92px) calc(clamp(18px, 3vw, 44px) + 190px)
+    clamp(20px, 4vh, 44px) calc(clamp(18px, 3vw, 44px) + 190px);
 }
 
 .panelHead {

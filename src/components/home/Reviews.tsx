@@ -40,7 +40,7 @@ export default function Reviews() {
     <section
       id="reviews"
       className={`${s.chapter} ${s.chapterShort} ${s.orange} ${s.reviewsSection}`}
-      data-theme="dark"
+      data-theme="ember"
       data-chapter="Community"
       aria-label="What our clients say"
     >
