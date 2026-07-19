@@ -11,7 +11,7 @@ export const PAGES = [
   { label: "Gallery", href: "/gallery" },
   { label: "Community", href: "/#reviews" },
   { label: "Find Us", href: "/#find-us" },
-  { label: "Get a Quote", href: "/#contact" },
+  { label: "Contact Us", href: "/#contact" },
 ];
 
 /** The Services dropdown — deep-links to the sections on the Services page. */

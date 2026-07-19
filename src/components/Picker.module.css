@@ -318,10 +318,11 @@
 .svcTitle {
   display: block;
   margin: 0;
-  font-family: var(--font-serif);
-  font-weight: 300;
-  font-size: clamp(19px, 2.4vw, 24px);
-  line-height: 1.2;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(15.5px, 1.8vw, 18px);
+  letter-spacing: 0.01em;
+  line-height: 1.25;
   color: var(--ink);
   transition: color 0.2s ease;
 }

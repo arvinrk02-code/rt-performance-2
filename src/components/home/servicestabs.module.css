@@ -61,21 +61,23 @@
   color: #15130f;
 }
 
-/* the small marker glyph that appears on the active tab (their pixel icon) */
+/* per-service marker icon — always present, painted in the tab's own
+   colour so it dims and darkens with the label */
 .tabMark {
-  width: 0;
-  height: 12px;
-  overflow: hidden;
-  border-radius: 2px;
-  background:
-    conic-gradient(from 0deg, #15130f 0 25%, transparent 0 50%, #15130f 0 75%, transparent 0)
-      0 0 / 6px 6px;
-  opacity: 0;
-  transition: width 0.35s ease, opacity 0.35s ease;
+  flex-shrink: 0;
+  width: 17px;
+  height: 17px;
+  opacity: 0.75;
+  transition: opacity 0.35s ease;
+}
+
+.tabMark svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .tabOn .tabMark {
-  width: 12px;
   opacity: 1;
 }
 
@@ -117,13 +119,13 @@
   object-fit: cover;
 }
 
-/* annotation card, bottom-left, their dashed-note language cleaned up */
+/* compact CTA chip, bottom-left — just the link, so the photo stays clear */
 .card {
   position: absolute;
   left: clamp(16px, 2.5vw, 32px);
   bottom: clamp(16px, 2.5vw, 32px);
-  max-width: min(70%, 400px);
-  padding: 18px 20px 16px;
+  width: max-content;
+  padding: 13px 18px 12px;
   background: rgba(246, 241, 232, 0.92);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(21, 19, 15, 0.12);
@@ -142,17 +144,8 @@
   }
 }
 
-.cardNote {
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: clamp(13.5px, 1.1vw, 15.5px);
-  line-height: 1.5;
-  color: rgba(21, 19, 15, 0.82);
-}
-
 .cardLink {
   display: inline-block;
-  margin-top: 12px;
   font-family: var(--font-sans);
   font-size: 11px;
   font-weight: 500;

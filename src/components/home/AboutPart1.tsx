@@ -26,7 +26,7 @@ export default function AboutPart1() {
         </div>
         <div className={s.stmtContent}>
           <h2 id="about-h" className={s.stmtHead} data-reveal="headline">
-            An independent body and paint centre in Wembley, London.
+            London&rsquo;s Premier Auto Body Repair Centre
           </h2>
           <p className={s.stmtBody} data-reveal="rise">
             RT Performance repairs, resprays and restores cars from Unit 10,

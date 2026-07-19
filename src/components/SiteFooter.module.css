@@ -72,6 +72,26 @@
   border-radius: 3px;
 }
 
+/* contact-rail rows that carry a leading icon */
+.iconLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.linkIcon {
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+  color: var(--ember);
+}
+
+.linkIcon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .address {
   margin: 0;
   font-family: var(--font-sans);
@@ -86,21 +106,6 @@
   font-family: var(--font-sans);
   font-size: 12.5px;
   color: rgba(245, 245, 245, 0.5);
-}
-
-/* the emotional close — serif, large, orange full stop */
-.close {
-  max-width: 1400px;
-  margin: 72px auto 0;
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: clamp(34px, 4.6vw, 72px);
-  line-height: 1.05;
-  color: rgba(245, 245, 245, 0.92);
-}
-
-.closeDot {
-  color: var(--ember);
 }
 
 .legal {

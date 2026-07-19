@@ -165,12 +165,12 @@
   border-bottom: 1px solid var(--hairline);
   text-decoration: none;
   color: rgba(245, 245, 245, 0.88);
-  transition: color 0.3s ease, padding-left 0.35s ease;
+  transition: color 0.3s ease, transform 0.35s ease;
 }
 
 .svcRow:hover {
   color: #fff;
-  padding-left: 10px;
+  transform: translateX(10px);
 }
 
 .svcName {
