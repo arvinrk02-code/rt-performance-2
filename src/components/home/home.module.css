@@ -475,7 +475,7 @@
   }
 }
 
-/* the 3-up gallery band with corner "+" buttons */
+/* the 3-up gallery band with quiet corner arrows */
 .triptych {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -508,27 +508,37 @@
   object-fit: cover;
 }
 
-.plus {
+/* a quiet corner arrow — hairline ring that sits on any photo, brightening
+   and nudging up-right on hover instead of a loud white badge */
+.tripArrow {
   position: absolute;
-  right: 18px;
-  bottom: 18px;
-  width: 44px;
-  height: 44px;
+  right: 16px;
+  bottom: 16px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
-  color: #141518;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(3px);
+  color: rgba(255, 255, 255, 0.85);
   display: grid;
   place-items: center;
   font-family: var(--font-sans);
-  font-size: 22px;
-  font-weight: 300;
+  font-size: 17px;
+  font-weight: 400;
   line-height: 1;
-  transition: transform 0.3s ease, background 0.3s ease;
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease;
 }
 
-.tripCard:hover .plus {
-  transform: scale(1.1);
-  background: #fff;
+.tripCard:hover .tripArrow {
+  border-color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  transform: translate(2px, -2px);
 }
 
 /* WhatsApp FAB — their bottom-right chrome */

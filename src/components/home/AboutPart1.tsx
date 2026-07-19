@@ -8,7 +8,7 @@ const TRIPTYCH = [
 ];
 
 /** About — Cayenne Black Edition grammar: bold uppercase statement lower-left,
- *  dimmed media right, then the 3-up gallery band with corner "+" buttons. */
+ *  dimmed media right, then the 3-up gallery band with quiet corner arrows. */
 export default function AboutPart1() {
   return (
     <section id="about" data-theme="dark" data-chapter="About" aria-labelledby="about-h">
@@ -45,8 +45,8 @@ export default function AboutPart1() {
             aria-label={`${t.alt} — open the gallery`}
           >
             <img src={t.src} alt={t.alt} loading="lazy" />
-            <span className={s.plus} aria-hidden="true">
-              +
+            <span className={s.tripArrow} aria-hidden="true">
+              ↗
             </span>
           </a>
         ))}
