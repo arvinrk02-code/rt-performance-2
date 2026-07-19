@@ -5,20 +5,20 @@ import {
   useEffect,
   useRef,
   useState,
-  type CSSProperties,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import { WORK_CARS, type WorkCar } from "./work";
+import { WORK_CARS, type WorkCar, type WorkPhoto } from "./work";
 import Lightbox from "./Lightbox";
 import styles from "./OurWork.module.css";
 
 /* Our Work — an instrument for the seven featured builds.
  *
- * A numbered rail on the side selects a car; the panels swipe across. Each car
- * is a title, a one-line overview, and a 3D coverflow of its photos with a
- * rev-counter dial beneath as the progress gauge — click the centre photo to
- * expand it, and its caption tells that stage of the repair. Deep-links by hash
- * (/our-work#ferrari-458) so the home slider's CTAs land on the right car. */
+ * A marque rail on the left selects a car; the panels swipe across. Each car
+ * is a serif title, a one-line overview, and a continuous filmstrip of its
+ * photos — drag or arrow through it, click the centre frame to expand. A
+ * stage thread beneath tracks the repair arc (Strip → Paint → Finish) and
+ * the photo count. Deep-links by hash (/our-work#ferrari-458) so the home
+ * slider's CTAs land on the right car. */
 
 const OUT_MS = 280; // the current car dips to black
 const IN_MS = 660; // the new panel rises from below in front of the receding black
@@ -36,7 +36,7 @@ export default function OurWork() {
   const [expanded, setExpanded] = useState<{ car: number; photo: number } | null>(
     null
   );
-  // current photo per car for the coverflow galleries
+  // current photo per car for the filmstrip galleries
   const [photoIdx, setPhotoIdx] = useState<number[]>(() =>
     WORK_CARS.map(() => 0)
   );
@@ -137,7 +137,7 @@ export default function OurWork() {
   }, [go]);
 
   // keyboard: up/down change car (matching the vertical rail), left/right move
-  // through the active car's photos (matching the horizontal coverflow). The
+  // through the active car's photos (matching the horizontal filmstrip). The
   // lightbox owns the keyboard while it is open.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -175,7 +175,15 @@ export default function OurWork() {
         {car.title}
       </div>
 
-      {/* the numbered rail — select a car */}
+      {/* the page header — the h1 reads "Our Work: Featured Builds" */}
+      <header className={styles.pageHead}>
+        <h1 className={styles.pageTitle}>
+          <span className={styles.pageEyebrow}>Our Work</span>
+          Featured Builds
+        </h1>
+      </header>
+
+      {/* the marque rail — select a car */}
       <nav className={styles.rail} aria-label="Featured cars">
         <ol className={styles.railList}>
           {WORK_CARS.map((c, i) => (
@@ -189,8 +197,9 @@ export default function OurWork() {
                 aria-label={`View ${c.title}`}
                 onClick={() => go(i)}
               >
-                <span className={styles.railName}>{c.short}</span>
+                <span className={styles.railMarker} aria-hidden="true" />
                 <MarqueMark marque={c.marque} n={i + 1} />
+                <span className={styles.railName}>{c.short}</span>
               </button>
             </li>
           ))}
@@ -218,7 +227,6 @@ export default function OurWork() {
         >
           <Panel
             car={WORK_CARS[shown]}
-            n={shown + 1}
             isActive={phase !== "out"}
             photoIndex={photoIdx[shown]}
             onPhoto={(idx) => setPhoto(shown, idx)}
@@ -292,21 +300,13 @@ function MarqueMark({ marque, n }: { marque: string; n: number }) {
 
 interface PanelProps {
   car: WorkCar;
-  n: number;
   isActive: boolean;
   photoIndex: number;
   onPhoto: (photoIndex: number) => void;
   onExpand: (photoIndex: number) => void;
 }
 
-function Panel({
-  car,
-  n,
-  isActive,
-  photoIndex,
-  onPhoto,
-  onExpand,
-}: PanelProps) {
+function Panel({ car, isActive, photoIndex, onPhoto, onExpand }: PanelProps) {
   return (
     <section
       className={styles.panel}
@@ -315,12 +315,11 @@ function Panel({
       aria-label={car.title}
     >
       <header className={styles.panelHead} key={car.slug}>
-        <span className={styles.eyebrow}>Featured Build</span>
         <h2 className={styles.title}>{car.title}</h2>
         <p className={styles.overview}>{car.overview}</p>
       </header>
 
-      <Coverflow
+      <Filmstrip
         car={car}
         isActive={isActive}
         photoIndex={photoIndex}
@@ -331,9 +330,15 @@ function Panel({
   );
 }
 
-/* ------------------------------------------------ coverflow photo gallery */
+/* ----------------------------------------------- filmstrip photo gallery */
 
-interface CoverflowProps {
+/* A continuous strip of full frames on one eased track: the active photo
+ * sits centred while its neighbours peek in from the sides, dimmed; the
+ * strip glides (transform-only) when the photo changes, follows the pointer
+ * 1:1 during a drag, and snaps to the nearest frame on release. The centre
+ * image carries a slow Ken-Burns drift so the gallery never sits still. */
+
+interface FilmstripProps {
   car: WorkCar;
   isActive: boolean;
   photoIndex: number;
@@ -341,239 +346,210 @@ interface CoverflowProps {
   onExpand: (photoIndex: number) => void;
 }
 
-function Coverflow({
+function Filmstrip({
   car,
   isActive,
   photoIndex,
   onPhoto,
   onExpand,
-}: CoverflowProps) {
+}: FilmstripProps) {
   const photos = car.gallery;
   const n = photos.length;
+  const trackRef = useRef<HTMLDivElement | null>(null);
   const drag = useRef({ x: 0, down: false, moved: false });
 
-  const clamp = (i: number) => ((i % n) + n) % n;
+  const clampIdx = (i: number) => Math.max(0, Math.min(n - 1, i));
+
+  // one frame-step of the strip in px, measured live so CSS clamp() rules it
+  const stepPx = () => {
+    const track = trackRef.current;
+    const first = track?.firstElementChild as HTMLElement | null;
+    if (!track || !first) return 0;
+    const gap = parseFloat(getComputedStyle(track).columnGap || "0") || 0;
+    return first.offsetWidth + gap;
+  };
 
   const onPointerDown = (e: ReactPointerEvent) => {
     drag.current = { x: e.clientX, down: true, moved: false };
   };
   const onPointerMove = (e: ReactPointerEvent) => {
-    if (drag.current.down && Math.abs(e.clientX - drag.current.x) > 6) {
+    if (!drag.current.down) return;
+    const dx = e.clientX - drag.current.x;
+    if (!drag.current.moved && Math.abs(dx) > 6) {
       drag.current.moved = true;
+      trackRef.current?.classList.add(styles.fsDragging);
+    }
+    // --dragX lives outside React so the strip tracks the pointer at 60fps
+    if (drag.current.moved) {
+      trackRef.current?.style.setProperty("--dragX", `${dx}px`);
     }
   };
   const onPointerUp = (e: ReactPointerEvent) => {
     if (!drag.current.down) return;
-    const dx = e.clientX - drag.current.x;
     drag.current.down = false;
-    if (dx > 44) onPhoto(clamp(photoIndex - 1));
-    else if (dx < -44) onPhoto(clamp(photoIndex + 1));
+    const dx = e.clientX - drag.current.x;
+    const track = trackRef.current;
+    track?.classList.remove(styles.fsDragging);
+    track?.style.setProperty("--dragX", "0px");
+    const step = stepPx();
+    let shift = step ? Math.round(-dx / step) : 0;
+    if (shift === 0 && Math.abs(dx) > 44) shift = dx < 0 ? 1 : -1; // short flick
+    if (shift !== 0) onPhoto(clampIdx(photoIndex + shift));
   };
 
   return (
-    <div className={styles.cf}>
+    <figure className={styles.fs}>
       <div
-        className={styles.cfStage}
+        className={styles.fsViewport}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerLeave={onPointerUp}
       >
-        {photos.map((p, i) => {
-          const offset = i - photoIndex;
-          const a = Math.abs(offset);
-          const dir = Math.sign(offset);
-          const scale = a === 0 ? 1 : Math.max(0.6, 1 - a * 0.16);
-          const style: CSSProperties = {
-            transform: `translate(-50%, -50%) translateX(${offset * 56}%) rotateY(${
-              -dir * 42
-            }deg) scale(${scale})`,
-            opacity: a === 0 ? 1 : a === 1 ? 0.6 : a === 2 ? 0.26 : 0,
-            zIndex: 30 - a,
-            pointerEvents: a > 2 ? "none" : "auto",
-          };
-          const isCentre = offset === 0;
+        <div
+          ref={trackRef}
+          className={styles.fsTrack}
+          style={{ ["--i" as string]: photoIndex }}
+        >
+          {photos.map((p, i) => {
+            const a = Math.abs(i - photoIndex);
+            const isCentre = i === photoIndex;
+            return (
+              <button
+                key={p.src}
+                type="button"
+                className={`${styles.fsFrame} ${
+                  isCentre ? styles.fsFrameActive : ""
+                } ${a > 2 ? styles.fsFrameFar : ""}`}
+                aria-hidden={a > 2}
+                tabIndex={isActive && a <= 2 ? 0 : -1}
+                aria-label={
+                  isCentre ? `Expand: ${p.caption}` : `Show: ${p.caption}`
+                }
+                onClick={() => {
+                  if (drag.current.moved) {
+                    drag.current.moved = false;
+                    return;
+                  }
+                  if (isCentre) onExpand(i);
+                  else onPhoto(i);
+                }}
+              >
+                <span className={styles.fsInner}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={p.src}
+                    alt={p.caption}
+                    className={styles.fsImg}
+                    loading={isCentre ? "eager" : "lazy"}
+                    draggable={false}
+                  />
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <figcaption className={styles.fsCaption} key={photoIndex}>
+        {photos[photoIndex].caption}
+      </figcaption>
+
+      <ProgressThread photos={photos} index={photoIndex} onSeek={onPhoto} />
+    </figure>
+  );
+}
+
+/* ------------------------------------------------------- the stage thread */
+
+/* Replaces the old rev-counter dial (the hero owns the tachometer motif).
+ * One hairline thread spans the gallery: a fine tick per photo, an ember
+ * fill up to the current frame, and a travelling ember diamond as the
+ * "you are here" mark. Photos tagged with a stage get a taller labelled
+ * node (Strip → Paint → Finish) that can be clicked to jump there — the
+ * current stage's label burns ember — with the photo count at the right. */
+
+function ProgressThread({
+  photos,
+  index,
+  onSeek,
+}: {
+  photos: WorkPhoto[];
+  index: number;
+  onSeek: (i: number) => void;
+}) {
+  const n = photos.length;
+  const p = n > 1 ? index / (n - 1) : 0;
+  const pct = (i: number) => (n > 1 ? (i / (n - 1)) * 100 : 50);
+
+  const nodes = photos
+    .map((ph, i) => ({ i, stage: ph.stage }))
+    .filter((x): x is { i: number; stage: string } => Boolean(x.stage));
+
+  // the stage the current photo sits in = the last tagged stage at or before it
+  let current = "";
+  for (const nd of nodes) if (nd.i <= index) current = nd.stage;
+
+  return (
+    <div className={styles.thread}>
+      <div className={styles.threadRail}>
+        <span className={styles.threadLine} aria-hidden="true" />
+        <span
+          className={styles.threadFill}
+          aria-hidden="true"
+          style={{ ["--p" as string]: p }}
+        />
+        {photos.map((_, i) => (
+          <span
+            key={i}
+            className={styles.threadTick}
+            aria-hidden="true"
+            style={{ left: `${pct(i)}%` }}
+          />
+        ))}
+        {nodes.map((nd, k) => {
+          const at = pct(nd.i);
+          // flip a label above the line when it would crowd its neighbour
+          const flip = k > 0 && at - pct(nodes[k - 1].i) < 14;
           return (
             <button
-              key={p.src}
+              key={nd.i}
               type="button"
-              className={styles.cfItem}
-              style={style}
-              aria-hidden={a > 2}
-              tabIndex={isActive && a <= 2 ? 0 : -1}
-              aria-label={
-                isCentre ? `Expand: ${p.caption}` : `Show: ${p.caption}`
-              }
-              onClick={() => {
-                if (drag.current.moved) {
-                  drag.current.moved = false;
-                  return;
-                }
-                if (isCentre) onExpand(i);
-                else onPhoto(i);
-              }}
+              className={`${styles.threadNode} ${
+                nd.i <= index ? styles.threadNodePassed : ""
+              } ${
+                current === nd.stage ? styles.threadNodeCurrent : ""
+              } ${flip ? styles.threadNodeFlip : ""} ${
+                at < 3 ? styles.threadNodeStart : at > 97 ? styles.threadNodeEnd : ""
+              }`}
+              style={{ left: `${at}%` }}
+              aria-label={`Go to ${nd.stage} stage, photo ${nd.i + 1} of ${n}`}
+              onClick={() => onSeek(nd.i)}
             >
-              <span className={styles.cfInner}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={p.src}
-                  alt={p.caption}
-                  className={styles.cfImg}
-                  loading="lazy"
-                  draggable={false}
-                />
-                {isCentre && p.stage && (
-                  <span className={styles.cfStageTag}>{p.stage}</span>
-                )}
+              <span className={styles.threadNodeTick} aria-hidden="true" />
+              <span className={styles.threadLabel} aria-hidden="true">
+                {nd.stage}
               </span>
             </button>
           );
         })}
+        <span
+          className={styles.threadCarriage}
+          aria-hidden="true"
+          style={{ ["--p" as string]: p }}
+        >
+          <span className={styles.threadMarker} />
+        </span>
       </div>
 
-      <figcaption className={styles.cfCaption} key={photoIndex}>
-        {photos[photoIndex].caption}
-      </figcaption>
-
-      <ProgressDial count={n} index={photoIndex} />
+      <span className={styles.threadCount}>
+        <span aria-hidden="true">
+          {String(index + 1).padStart(2, "0")} / {String(n).padStart(2, "0")}
+        </span>
+        <span className={styles.srOnly}>
+          {`Photo ${index + 1} of ${n}${current ? `, ${current} stage` : ""}`}
+        </span>
+      </span>
     </div>
-  );
-}
-
-/* ---------------------------- the rev-counter dial, now a progress gauge */
-
-const P_CX = 70;
-const P_CY = 58;
-const P_R = 44;
-const P_FROM = 210; // first photo — lower-left
-const P_SPAN = 240; // sweeps clockwise to lower-right on the last photo
-const P_END = P_FROM - P_SPAN; // -30, lower-right
-const P_REDLINE = P_END + 42; // graduations past here glow RT orange (redline)
-
-function pPt(angleDeg: number, r: number): [number, number] {
-  const a = (angleDeg * Math.PI) / 180;
-  return [P_CX + r * Math.cos(a), P_CY - r * Math.sin(a)];
-}
-
-function pArc(fromDeg: number, toDeg: number, r: number): string {
-  const pts: string[] = [];
-  const step = fromDeg > toDeg ? -2 : 2;
-  for (let a = fromDeg; step < 0 ? a >= toDeg : a <= toDeg; a += step) {
-    const [x, y] = pPt(a, r);
-    pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
-  }
-  return pts.join(" ");
-}
-
-function ProgressDial({ count, index }: { count: number; index: number }) {
-  const angleAt = (i: number) =>
-    count > 1 ? P_FROM - (i * P_SPAN) / (count - 1) : P_FROM - P_SPAN / 2;
-
-  const needleAngle = angleAt(index);
-  const rot = 90 - needleAngle; // rotate an up-pointing needle to the target
-
-  // evenly-spaced minor graduations across the sweep
-  const minors: number[] = [];
-  for (let a = P_FROM; a >= P_END - 0.01; a -= 12) minors.push(a);
-
-  return (
-    <svg viewBox="0 0 140 84" className={styles.progSvg} aria-hidden="true">
-      {/* base track */}
-      <polyline
-        points={pArc(P_FROM, P_END, P_R)}
-        fill="none"
-        stroke="rgba(255,255,255,0.16)"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-      />
-      {/* redline — the last stretch of the sweep glows RT orange */}
-      <polyline
-        points={pArc(P_REDLINE, P_END, P_R)}
-        fill="none"
-        stroke="rgba(225,67,18,0.55)"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-      />
-      {/* progress fill — first photo up to the current one */}
-      {index > 0 && (
-        <polyline
-          points={pArc(P_FROM, needleAngle, P_R)}
-          fill="none"
-          stroke="rgba(225,67,18,0.85)"
-          strokeWidth="1.4"
-          strokeLinecap="round"
-        />
-      )}
-      {/* minor graduations */}
-      {minors.map((a) => {
-        const [x1, y1] = pPt(a, P_R - 4);
-        const [x2, y2] = pPt(a, P_R);
-        const red = a <= P_REDLINE + 0.01;
-        return (
-          <line
-            key={`min${a.toFixed(0)}`}
-            x1={x1.toFixed(1)}
-            y1={y1.toFixed(1)}
-            x2={x2.toFixed(1)}
-            y2={y2.toFixed(1)}
-            stroke={red ? "rgba(225,67,18,0.85)" : "rgba(255,255,255,0.22)"}
-            strokeWidth={red ? 1.3 : 1}
-          />
-        );
-      })}
-      {/* major graduations — one per photo */}
-      {Array.from({ length: count }, (_, i) => {
-        const ang = angleAt(i);
-        const [x1, y1] = pPt(ang, P_R - 8);
-        const [x2, y2] = pPt(ang, P_R + 1);
-        const on = i === index;
-        return (
-          <line
-            key={`maj${i}`}
-            x1={x1.toFixed(1)}
-            y1={y1.toFixed(1)}
-            x2={x2.toFixed(1)}
-            y2={y2.toFixed(1)}
-            stroke={on ? "#e14312" : "rgba(255,255,255,0.6)"}
-            strokeWidth={on ? 2.4 : 1.5}
-          />
-        );
-      })}
-      {/* needle */}
-      <g
-        style={{
-          transform: `rotate(${rot}deg)`,
-          transformOrigin: `${P_CX}px ${P_CY}px`,
-          transition: "transform 0.55s cubic-bezier(0.3, 1.4, 0.55, 1)",
-        }}
-      >
-        <line
-          x1={P_CX}
-          y1={P_CY + 6}
-          x2={P_CX}
-          y2={P_CY - (P_R - 12)}
-          stroke="rgba(245,245,245,0.92)"
-          strokeWidth="1.8"
-        />
-        <line
-          x1={P_CX}
-          y1={P_CY - (P_R - 12)}
-          x2={P_CX}
-          y2={P_CY - (P_R - 4)}
-          stroke="#e14312"
-          strokeWidth="1.8"
-        />
-      </g>
-      {/* hub */}
-      <circle
-        cx={P_CX}
-        cy={P_CY}
-        r="3.4"
-        fill="#0b0b0c"
-        stroke="rgba(255,255,255,0.75)"
-        strokeWidth="1"
-      />
-      <circle cx={P_CX} cy={P_CY} r="0.9" fill="rgba(245,245,245,0.9)" />
-    </svg>
   );
 }

@@ -1,7 +1,8 @@
-/* Our Work — the instrument. Numbered rail selects a car; panels swipe; each
-   car's photos ring a rev-counter dial; clicking a photo expands it.
+/* Our Work — the instrument. A marque rail on the left selects a car; panels
+   swipe; each car's photos run as an eased filmstrip with a stage thread
+   beneath; clicking the centre frame expands it.
    Design language shared with the home slider: --void/--ink/--ember/--hairline,
-   Noto Serif Display headings, Inter labels, zero-padded numerals. */
+   Noto Serif Display car titles, Inter labels, IBM Plex Mono numerals. */
 
 .stage {
   position: relative;
@@ -28,18 +29,56 @@
   border: 0;
 }
 
+/* ---------------------------------------------------- the page header */
+
+/* compact corner header — the page-level title, kept clear of the serif
+   car titles centred in the panel below it */
+.pageHead {
+  position: absolute;
+  top: clamp(20px, 3.8vh, 40px);
+  left: clamp(24px, 4vw, 56px);
+  z-index: 6;
+}
+
+.pageTitle {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: clamp(22px, 2.4vw, 32px);
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+.pageEyebrow {
+  display: block;
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+
+.pageHead::after {
+  content: "";
+  display: block;
+  width: 64px;
+  height: 1px;
+  margin-top: 14px;
+  background: var(--hairline);
+}
+
 /* ----------------------------------------------------------- the rail */
 
+/* a framed instrument column: hairline top/bottom rules, hairline dividers
+   between cells, logo + short name in every cell, and an ember edge bar
+   marking the active car */
 .rail {
   position: absolute;
   top: 50%;
-  right: clamp(18px, 3.2vw, 46px);
+  left: clamp(18px, 3vw, 44px);
   transform: translateY(-50%);
   z-index: 6;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: clamp(8px, 1.4vh, 16px);
 }
 
 .railList {
@@ -48,29 +87,56 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: clamp(8px, 1.4vh, 16px);
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.railList li + li {
+  border-top: 1px solid var(--hairline);
 }
 
 .railBtn {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-  padding: 4px 0;
+  gap: 14px;
+  width: 100%;
+  padding: 10px 20px 10px 16px;
   background: none;
   border: 0;
   cursor: pointer;
-  color: rgba(245, 245, 245, 0.5);
-  transition: color 0.25s ease;
+  text-align: left;
+  color: rgba(245, 245, 245, 0.56);
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease;
 }
 
 .railBtn:hover {
   color: var(--ink);
+  background-color: rgba(255, 255, 255, 0.045);
 }
 
-.railBtnActive {
+.railBtnActive,
+.railBtnActive:hover {
   color: var(--ember);
+}
+
+/* the ember edge bar on the active cell */
+.railMarker {
+  position: absolute;
+  left: 0;
+  top: 16%;
+  bottom: 16%;
+  width: 2px;
+  background: var(--ember);
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+
+.railBtnActive .railMarker {
+  transform: scaleY(1);
 }
 
 /* the marque mark — a monochrome line sketch painted in the rail's current
@@ -78,8 +144,9 @@
    source SVG's own colours don't matter and every marque reads as one set */
 .railLogo {
   display: block;
-  width: 30px;
-  height: 30px;
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
   background-color: currentColor;
   -webkit-mask: var(--logo) center / contain no-repeat;
   mask: var(--logo) center / contain no-repeat;
@@ -90,15 +157,15 @@
    the same dim → bright → active states are done with filters instead */
 .railLogoColor {
   display: block;
-  width: 30px;
-  height: 30px;
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
   object-fit: contain;
   filter: grayscale(0.55) brightness(0.6);
   opacity: 0.75;
   transition:
     filter 0.25s ease,
-    opacity 0.25s ease,
-    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 0.25s ease;
 }
 
 .railBtn:hover .railLogoColor {
@@ -109,11 +176,11 @@
 .railBtnActive .railLogoColor {
   filter: grayscale(0) brightness(1) drop-shadow(0 0 8px rgba(225, 67, 18, 0.55));
   opacity: 1;
-  transform: scale(1.06);
 }
 
 /* fallback shown only until a marque's SVG is added to public/logos/ */
 .railNum {
+  flex: 0 0 auto;
   font-family: var(--font-serif);
   font-weight: 300;
   font-size: 16px;
@@ -125,27 +192,15 @@
   font-family: var(--font-sans);
   font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   white-space: nowrap;
-  color: rgba(245, 245, 245, 0.75);
-  opacity: 0;
-  transform: translateX(8px);
-  transition:
-    opacity 0.25s ease,
-    transform 0.25s ease;
-}
-
-.railBtn:hover .railName,
-.railBtnActive .railName {
-  opacity: 1;
-  transform: none;
+  color: inherit;
 }
 
 .railBtn:focus-visible {
   outline: 2px solid var(--ember);
-  outline-offset: 4px;
-  border-radius: 3px;
+  outline-offset: -2px;
 }
 
 /* ------------------------------------------------- swiping panels */
@@ -212,8 +267,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: clamp(20px, 4vh, 48px) clamp(72px, 11vw, 150px)
-    clamp(20px, 4vh, 44px) clamp(32px, 7vw, 120px);
+  padding: clamp(56px, 8vh, 92px) clamp(36px, 5vw, 84px)
+    clamp(20px, 4vh, 44px) clamp(190px, 20vw, 280px);
 }
 
 .panelHead {
@@ -221,17 +276,6 @@
   width: 100%;
   max-width: 100%;
   flex: 0 0 auto;
-}
-
-.eyebrow {
-  display: block;
-  margin: 0 0 16px;
-  font-family: var(--font-sans);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--ember);
 }
 
 .title {
@@ -253,45 +297,97 @@
   color: rgba(245, 245, 245, 0.72);
 }
 
-/* --------------------------------------- coverflow photo gallery + gauge */
+/* -------------------------------------- filmstrip gallery + stage thread */
 
-.cf {
+.fs {
   flex: 1 1 auto;
+  min-height: 0;
   width: 100%;
+  margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(14px, 2.6vh, 30px);
+  gap: clamp(14px, 2.4vh, 26px);
 }
 
-/* the 3D stage — cards sit centred and are transformed by offset in JS */
-.cfStage {
+/* the strip window: frames run on one eased track behind a soft edge fade */
+.fsViewport {
+  --fw: clamp(250px, 36vw, 480px);
+  --fsGap: clamp(16px, 2.2vw, 30px);
   position: relative;
   width: 100%;
-  height: clamp(220px, 42vh, 420px);
-  perspective: 1600px;
+  height: calc(var(--fw) * 2 / 3);
+  overflow: hidden;
   touch-action: pan-y;
+  cursor: grab;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 8%,
+    #000 92%,
+    transparent 100%
+  );
 }
 
-.cfItem {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: clamp(240px, 32vw, 440px);
-  aspect-ratio: 3 / 2;
+.fsViewport:active {
+  cursor: grabbing;
+}
+
+/* --i (React) centres the active frame; --dragX (set outside React) lets the
+   strip follow the pointer 1:1, then both ease home in one transition */
+.fsTrack {
+  display: flex;
+  gap: var(--fsGap);
+  width: max-content;
+  height: 100%;
+  margin-left: 50%;
+  transform: translateX(
+    calc(
+      var(--fw) / -2 - var(--i, 0) * (var(--fw) + var(--fsGap)) +
+        var(--dragX, 0px)
+    )
+  );
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.fsDragging {
+  transition: none;
+}
+
+.fsFrame {
+  flex: 0 0 var(--fw);
+  height: 100%;
   padding: 0;
   border: 0;
   background: none;
   cursor: pointer;
-  transform-style: preserve-3d;
+  opacity: 0.38;
+  transform: scale(0.94);
   transition:
-    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.55s ease;
-  will-change: transform, opacity;
+    opacity 0.5s ease,
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.cfInner {
+.fsFrameActive {
+  opacity: 1;
+  transform: none;
+}
+
+/* beyond the edge fade — invisible, so don't let them catch the pointer */
+.fsFrameFar {
+  pointer-events: none;
+}
+
+.fsInner {
   position: relative;
   display: block;
   width: 100%;
@@ -302,39 +398,40 @@
   box-shadow: 0 26px 60px rgba(0, 0, 0, 0.6);
 }
 
-.cfImg {
+.fsImg {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
   user-select: none;
+  transition: transform 0.9s ease;
 }
 
-.cfItem:focus-visible {
+/* the centre frame never sits quite still — a slow Ken-Burns drift, clipped
+   by the frame; starts slightly zoomed so the first frame is already alive */
+.fsFrameActive .fsImg {
+  animation: kenburns 13s ease-in-out infinite alternate;
+}
+
+@keyframes kenburns {
+  from {
+    transform: scale(1.015);
+  }
+  to {
+    transform: scale(1.075) translate3d(1.4%, -0.8%, 0);
+  }
+}
+
+.fsFrame:focus-visible {
   outline: none;
 }
 
-.cfItem:focus-visible .cfInner {
+.fsFrame:focus-visible .fsInner {
   outline: 2px solid var(--ember);
   outline-offset: 3px;
 }
 
-.cfStageTag {
-  position: absolute;
-  left: 12px;
-  bottom: 12px;
-  padding: 4px 10px;
-  border-radius: 2px;
-  background: rgba(2, 2, 4, 0.72);
-  font-family: var(--font-sans);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(245, 245, 245, 0.95);
-}
-
-.cfCaption {
+.fsCaption {
   min-height: 1.5em;
   max-width: 52ch;
   text-align: center;
@@ -356,11 +453,158 @@
   }
 }
 
-.progSvg {
-  display: block;
-  width: clamp(112px, 12vw, 150px);
-  height: auto;
-  filter: drop-shadow(0 3px 14px rgba(0, 0, 0, 0.5));
+/* ---------------------------------------------------- the stage thread */
+
+/* ——•——|———— [ 03 / 12 ]  — a hairline thread with a tick per photo, an
+   ember fill + travelling diamond for the current frame, and taller
+   labelled nodes at the tagged stages (clickable to jump there) */
+.thread {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: clamp(300px, 46vw, 580px);
+}
+
+.threadCount {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: rgba(245, 245, 245, 0.62);
+}
+
+.threadRail {
+  position: relative;
+  flex: 1 1 auto;
+  height: 44px;
+}
+
+.threadLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.threadFill {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1.5px;
+  margin-top: -0.25px;
+  background: rgba(225, 67, 18, 0.85);
+  transform: scaleX(var(--p, 0));
+  transform-origin: left center;
+  transition: transform 0.55s cubic-bezier(0.3, 1.4, 0.55, 1);
+}
+
+.threadTick {
+  position: absolute;
+  top: 50%;
+  width: 1px;
+  height: 7px;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* full-width carrier translated by --p × its own width, so the diamond
+   rides the thread on transform alone (no layout animation) */
+.threadCarriage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transform: translateX(calc(var(--p, 0) * 100%));
+  transition: transform 0.55s cubic-bezier(0.3, 1.4, 0.55, 1);
+  will-change: transform;
+}
+
+.threadMarker {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: var(--ember);
+  box-shadow: 0 0 10px rgba(225, 67, 18, 0.5);
+}
+
+/* a tagged stage: taller tick + label, one click to jump there */
+.threadNode {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.threadNodeTick {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.5px;
+  height: 11px;
+  transform: translate(-50%, -50%);
+  background: rgba(245, 245, 245, 0.55);
+  transition: background-color 0.3s ease;
+}
+
+.threadNodePassed .threadNodeTick {
+  background: var(--ember);
+}
+
+.threadLabel {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 9px);
+  transform: translateX(-50%);
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: rgba(245, 245, 245, 0.6);
+  transition: color 0.3s ease;
+}
+
+.threadNodePassed .threadLabel {
+  color: rgba(245, 245, 245, 0.85);
+}
+
+.threadNodeCurrent .threadLabel {
+  color: var(--ember);
+}
+
+/* crowded neighbours flip their label above the line */
+.threadNodeFlip .threadLabel {
+  top: auto;
+  bottom: calc(50% + 9px);
+}
+
+/* nodes at the thread's ends keep their labels inside the rail */
+.threadNodeStart .threadLabel {
+  left: 0;
+  transform: none;
+}
+
+.threadNodeEnd .threadLabel {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+
+.threadNode:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 /* ---------------------------------------------------- the lightbox */
@@ -509,13 +753,19 @@
 
 /* --------------------------------------------------- responsive */
 
-/* Phones / narrow: rail becomes a bottom strip; the panel flows in the page so
-   it can scroll (the dip/rise still plays on the static panel). */
+/* Phones / narrow: the header sits in the flow, the rail becomes a bottom
+   strip, and the panel flows in the page so it can scroll (the dip/rise
+   still plays on the static panel). */
 @media (max-width: 820px) {
   .stage {
     overflow: visible;
     min-height: 0;
     padding-bottom: 84px;
+  }
+
+  .pageHead {
+    position: static;
+    padding: clamp(28px, 6vh, 44px) 6% 0;
   }
 
   .viewport {
@@ -529,30 +779,33 @@
 
   .panel {
     height: auto;
-    padding: clamp(28px, 6vh, 56px) 6% 24px;
+    padding: clamp(24px, 5vh, 40px) 6% 24px;
   }
 
-  .cf {
+  .fs {
     margin-top: 18px;
   }
 
-  .cfStage {
-    height: clamp(200px, 34vh, 300px);
+  .fsViewport {
+    --fw: min(74vw, 340px);
+    --fsGap: 16px;
   }
 
-  .cfItem {
-    width: min(72vw, 340px);
+  .thread {
+    width: 100%;
+    gap: 12px;
+  }
+
+  .threadLabel {
+    font-size: 8px;
   }
 
   .rail {
     position: fixed;
     inset: auto 0 0 0;
     top: auto;
+    left: auto;
     transform: none;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 18px;
     padding: 12px 16px;
     background: rgba(2, 2, 4, 0.92);
     border-top: 1px solid var(--hairline);
@@ -563,21 +816,26 @@
   .railList {
     flex-direction: row;
     align-items: center;
-    gap: 18px;
+    border-top: 0;
+    border-bottom: 0;
   }
 
+  .railList li + li {
+    border-top: 0;
+    border-left: 1px solid var(--hairline);
+  }
+
+  .railBtn {
+    padding: 4px 16px;
+  }
+
+  .railBtn:hover {
+    background: none;
+  }
+
+  .railMarker,
   .railName {
     display: none;
-  }
-
-  .railLogo,
-  .railLogoColor {
-    width: 26px;
-    height: 26px;
-  }
-
-  .railNum {
-    font-size: 18px;
   }
 }
 
@@ -590,11 +848,20 @@
 
   .panelRise,
   .lbScrim,
-  .cfCaption {
+  .fsCaption {
     animation: none;
   }
 
-  .cfItem {
+  .fsTrack,
+  .fsFrame,
+  .fsImg,
+  .threadFill,
+  .threadCarriage,
+  .railMarker {
     transition: none;
+  }
+
+  .fsFrameActive .fsImg {
+    animation: none;
   }
 }
