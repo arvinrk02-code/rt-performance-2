@@ -315,9 +315,7 @@ function Panel({
       aria-label={car.title}
     >
       <header className={styles.panelHead} key={car.slug}>
-        <span className={styles.eyebrow}>
-          {String(n).padStart(2, "0")} · Featured Build
-        </span>
+        <span className={styles.eyebrow}>Featured Build</span>
         <h2 className={styles.title}>{car.title}</h2>
         <p className={styles.overview}>{car.overview}</p>
       </header>

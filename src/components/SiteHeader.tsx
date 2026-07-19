@@ -163,9 +163,6 @@ export default function SiteHeader({ variant = "solid" }: { variant?: Variant })
                 tabIndex={open ? 0 : -1}
                 onClick={() => setOpen(false)}
               >
-                <span className={styles.overlayIndex}>
-                  {String(i + 1).padStart(2, "0")}
-                </span>
                 {p.label}
               </Link>
               {p.label === "Services" && (

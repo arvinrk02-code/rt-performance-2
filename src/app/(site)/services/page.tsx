@@ -51,11 +51,8 @@ export default function ServicesPage() {
 
       <section className={svc.body} aria-label="Our services">
         <ol className={svc.list}>
-          {SERVICES.map((s, i) => (
+          {SERVICES.map((s) => (
             <li key={s.id} id={s.id} className={svc.item}>
-              <span className={svc.index} aria-hidden="true">
-                {String(i + 1).padStart(2, "0")}
-              </span>
               <div className={svc.itemBody}>
                 <h2 className={svc.itemTitle}>{s.title}</h2>
                 <p className={svc.itemText}>{s.text}</p>

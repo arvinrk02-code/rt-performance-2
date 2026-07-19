@@ -86,16 +86,13 @@ export default function ServicePicker({ onClose, onSelect }: ServicePickerProps)
         </header>
 
         <ul className={styles.serviceList}>
-          {SERVICE_OPTIONS.map((s, i) => (
+          {SERVICE_OPTIONS.map((s) => (
             <li key={s.title}>
               <button
                 type="button"
                 className={styles.service}
                 onClick={() => onSelect(s.title)}
               >
-                <span className={styles.svcIndex} aria-hidden="true">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
                 <span>
                   <span className={styles.svcTitle}>{s.title}</span>
                   <span className={styles.svcText}>{s.blurb}</span>

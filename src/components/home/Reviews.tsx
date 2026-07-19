@@ -46,7 +46,7 @@ export default function Reviews() {
     >
       <div className={s.reviewsHead}>
         <p className={s.tag} data-reveal="kicker">
-          <span className={s.tagIndex}>03</span>Community
+          Community
         </p>
       </div>
 

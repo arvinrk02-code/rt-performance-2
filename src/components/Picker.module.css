@@ -288,7 +288,7 @@
 .service {
   width: 100%;
   display: grid;
-  grid-template-columns: 52px 1fr;
+  grid-template-columns: 1fr;
   column-gap: 18px;
   align-items: baseline;
   text-align: left;

@@ -13,7 +13,7 @@ export default function FindUs() {
     >
       <div className={s.content}>
         <p className={s.tag} data-reveal="kicker">
-          <span className={s.tagIndex}>04</span>Find us
+          Find us
         </p>
         <h2 id="findus-h" className={s.headline} data-reveal="headline">
           Wembley, London.
