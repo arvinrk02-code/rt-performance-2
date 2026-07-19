@@ -1,7 +1,7 @@
 import s from "./home.module.css";
 
-/* Real-asset framing: 96% recommend / 20 reviews (Facebook + Google).
-   Quotes are drafts pending client sign-off — not emitted as schema. */
+/* Quotes are drafts pending client sign-off — not emitted as schema.
+   The section closes on a "Leave a review" CTA → RT's Google listing. */
 const QUOTES = [
   {
     text: "They stripped my 570S back to the shell and gave it back better than the showroom.",
@@ -45,7 +45,7 @@ export default function Reviews() {
       aria-label="What our clients say"
     >
       <div className={s.reviewsHead}>
-        <p className={s.tag} data-reveal="kicker">
+        <p className={s.reviewsTitle} data-reveal="kicker">
           Community
         </p>
       </div>
@@ -62,7 +62,14 @@ export default function Reviews() {
       </div>
 
       <p className={s.reviewsMeta} data-reveal="rise">
-        96% would recommend · 20 verified reviews · Google &amp; Facebook
+        <a
+          className={s.reviewLink}
+          href="https://www.google.com/maps/search/?api=1&query=RT+Performance+Wembley+HA9+0LH"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Leave a review ↗
+        </a>
       </p>
     </section>
   );
