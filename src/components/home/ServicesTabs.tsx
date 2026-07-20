@@ -58,7 +58,7 @@ const SERVICES = [
     name: "Accident Repairs",
     href: "/services#accident-repairs",
     img: "/photos/svc-accident.jpg",
-    alt: "White Lamborghini Huracán stripped at the rear for accident repair at RT Performance",
+    alt: "White Lamborghini Gallardo with its front bumper removed for accident repair at RT Performance",
     icon: <WrenchIcon />,
   },
   {
@@ -79,14 +79,14 @@ const SERVICES = [
     name: "Tints, Sprays & Wraps",
     href: "/services#tints-sprays-wraps",
     img: "/photos/svc-sprays.jpg",
-    alt: "Matte-black Lamborghini and red Porsche 911 GT2 RS refinished at RT Performance",
+    alt: "Chevrolet Camaro masked up and refinished in bright orange at RT Performance",
     icon: <SprayIcon />,
   },
   {
     name: "SMART Repairs",
     href: "/services#smart-repairs",
     img: "/photos/svc-smart.jpg",
-    alt: "Green Mercedes-AMG GT R showing a flawless finish after work at RT Performance",
+    alt: "RT Performance technician working on the front end of a white Range Rover Sport",
     icon: <TargetIcon />,
   },
 ];
